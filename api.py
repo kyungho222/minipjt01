@@ -954,8 +954,19 @@ async def get_questions(use_ai: str = "false", count: int = 5, difficulty: str =
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# 루트 경로 리디렉션
+from fastapi.responses import FileResponse
+
+@app.get("/")
+async def read_root():
+    return FileResponse("static/html/main.html")
+
+@app.get("/question")
+async def read_question():
+    return FileResponse("static/html/question.html")
+
 # Static 파일 마운트 (API 엔드포인트 뒤에 위치)
-app.mount("/", StaticFiles(directory=".", html=True), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.post("/reset_log")
 async def reset_log():
