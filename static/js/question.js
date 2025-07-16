@@ -171,13 +171,14 @@ async function submitAnswer() {
         // 결과 표시
         showResult(data.score);
         
-        // 답변 처리 후 다음 질문으로
-        currentCount++;
+        // 답변 처리 후 answer/answer.html로 이동
+        window.location.href = '/answer/answer.html';
         
-        // 2초 후 다음 질문으로
-        setTimeout(() => {
-            showNextQuestion();
-        }, 2000);
+        // 답변 처리 후 다음 질문으로
+        // currentCount++;
+        // setTimeout(() => {
+        //     showNextQuestion();
+        // }, 2000);
         
     } catch (error) {
         console.error('Error:', error);
