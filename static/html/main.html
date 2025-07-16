@@ -48,5 +48,21 @@
         </div>
     </div>
     <input type="button" value="시작" id="start_button">
+    
+    <!-- 알림 모달 -->
+    <div id="alert_modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>알림</h3>
+                <span class="close" onclick="hideAlertModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="alert_message"></p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="hideAlertModal()" class="modal-button">확인</button>
+            </div>
+        </div>
+    </div>
 </main>
 </body>

@@ -75,9 +75,15 @@ main {
 #main_content p {
     font-size: 36px;
     text-align: center;
-    -webkit-text-stroke: 1px rgb(198,140,0); 
     color: rgb(254,157,41);
-    text-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+}
+
+.main_content_box > p{
+text-shadow: 
+-1px -1px 0 gray,
+1px -1px 0 gray,
+-1px 1px 0 gray,
+1px 1px 0 gray;
 }
 
 #question_count, #question_type {
@@ -104,6 +110,14 @@ main {
 
 #question_count .question_count_box span, #question_type .question_type_box span{
     font-size: 24px;
+}
+
+.question_count_box span, .question_type_box span{
+    text-shadow: 
+    -1px -1px 0 gray,
+    1px -1px 0 gray,
+    -1px 1px 0 gray,
+    1px 1px 0 gray;
 }
 
 #start_button {
@@ -157,4 +171,100 @@ main {
     font-size: 14px;
     font-weight: bold;
     line-height: 16px;
+}
+
+/* 모달 스타일 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+.modal-header {
+    padding: 20px 25px 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.close {
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close:hover {
+    color: #ff6b6b;
+}
+
+.modal-body {
+    padding: 20px 25px;
+}
+
+.modal-body p {
+    margin: 0;
+    color: #555;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.modal-footer {
+    padding: 15px 25px 20px;
+    text-align: right;
+    border-top: 1px solid #eee;
+}
+
+.modal-button {
+    color: #fde4b0;
+    background-color: rgb(254,157,41);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+    box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 0.4);
+}
+
+.modal-button:hover {
+    background-color: rgb(250,145,43);
+    color:white;
+    transition: 0.2s background-color ease-in-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

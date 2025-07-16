@@ -1,5 +1,23 @@
 // API 기본 URL 설정
 const API_BASE_URL = 'http://localhost:8000';
+
+// 모달 함수들
+function showAlertModal(message) {
+    const modal = document.getElementById('alert_modal');
+    const messageElement = document.getElementById('alert_message');
+    
+    if (modal && messageElement) {
+        messageElement.textContent = message;
+        modal.style.display = 'flex';
+    }
+}
+
+function hideAlertModal() {
+    const modal = document.getElementById('alert_modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
         
 // 전역 변수
 let currentCount = 0;
@@ -22,12 +40,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const typeCheckboxes = document.querySelectorAll('input[name="meme"]:checked, input[name="aiSettings"]:checked');
         
         if (countCheckboxes.length === 0) {
-            alert('문제 개수를 선택해주세요!');
+            showAlertModal('문제 개수를 선택해주세요!');
             return;
         }
         
         if (typeCheckboxes.length === 0) {
-            alert('문제 타입을 선택해주세요!');
+            showAlertModal('문제 타입을 선택해주세요!');
             return;
         }
         
@@ -100,6 +118,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const aiCheckbox = document.querySelector('input[name="aiSettings"]');
     if (aiCheckbox) {
         aiCheckbox.addEventListener('change', toggleAISettings);
+    }
+
+    // 모달 백그라운드 클릭 시 닫기
+    const alertModal = document.getElementById('alert_modal');
+    if (alertModal) {
+        alertModal.addEventListener('click', function(event) {
+            if (event.target === alertModal) {
+                hideAlertModal();
+            }
+        });
     }
 });
 
@@ -214,11 +242,11 @@ async function generateNewQuestions() {
         const data = await response.json();
         questions = data.questions;
         
-        alert(`새로운 ${difficulty} 난이도의 ${count}개 질문이 생성되었습니다!`);
+        showAlertModal(`새로운 ${difficulty} 난이도의 ${count}개 질문이 생성되었습니다!`);
         
     } catch (error) {
         console.error('Error generating questions:', error);
-        alert('AI 질문 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
+        showAlertModal('AI 질문 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
 }
 
@@ -246,7 +274,7 @@ function showNextQuestion() {
 async function submitAnswer() {
     const answer = document.getElementById('answerInput').value.trim();
     if (!answer) {
-        alert('답변을 입력해주세요.');
+        showAlertModal('답변을 입력해주세요.');
         return;
     }
 
@@ -276,7 +304,7 @@ async function submitAnswer() {
         currentCount++;
     } catch (error) {
         console.error('Error:', error);
-        alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+        showAlertModal('분석 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
 }
 
