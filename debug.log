@@ -1,8 +1,5 @@
 [DEBUG] 서버가 실행되었습니다!
-<<<<<<< Updated upstream
 [DEBUG] 실행 중인 파일: C:\Users\RANG\Desktop\mini\api.py
-=======
-[DEBUG] 실행 중인 파일: C:\Users\201\Documents\GitHub\minipjt01\api.py
 [DEBUG] analyze_text 함수 진입!
 [DEBUG] /analyze 요청 도착, AI_MODEL:  genai.GenerativeModel(
    model_name='models/gemini-1.5-pro-latest',
@@ -149,4 +146,3 @@ F 성향은 감정적 연결과 공감을 중요하게 생각합니다.  "DD"는
 
 
 점수: 0 (T)
->>>>>>> Stashed changes
