@@ -1002,6 +1002,18 @@ def get_t_mild_ment():
         "팩트부터 정리해라? 내 마음은 누가 정리해줘?"
     ]
 
+# answer 폴더를 정적 파일로 서비스
+app.mount("/answer", StaticFiles(directory="answer"), name="answer")
+
+# images 폴더를 정적 파일로 서비스
+app.mount("/images", StaticFiles(directory="images"), name="images")
+
+# answer, images, static 폴더를 정적 파일로 서비스
+app.mount("/answer", StaticFiles(directory="answer"), name="answer")
+app.mount("/images", StaticFiles(directory="images"), name="images")
+app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/", StaticFiles(directory=".", html=True), name="root")
+
 if __name__ == "__main__":
     import uvicorn
     # 서버 시작 시 debug.log 파일 초기화
