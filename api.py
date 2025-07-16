@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 import google.generativeai as genai
 from dotenv import load_dotenv
+import random
 
 # 환경변수 로드
 load_dotenv()
@@ -57,13 +58,11 @@ class DetailedAnalysisRequest(BaseModel):
     score: float
 
 class AnalysisResponse(BaseModel):
-    score: float  # 기존 T/F 점수
-
-class DetailedAnalysisResponse(BaseModel):
-    detailed_analysis: str
-    reasoning: str
-    suggestions: List[str]
-    alternative_response: str
+    score: float
+    detailed_analysis: Optional[str] = None
+    reasoning: Optional[str] = None
+    suggestions: Optional[list] = None
+    alternative_response: Optional[str] = None
 
 class FinalAnalysisRequest(BaseModel):
     results: List[Dict]  # [{question, answer, score}, ...]
@@ -497,6 +496,20 @@ def generate_f_friendly_response(question: str, answer: str, score: float) -> st
     alternative = alternative_templates[idx % len(alternative_templates)]
     return f"✅ {tip}\n\n{alternative}"
 
+def get_f_friendly_alternatives():
+    return [
+        "야 우리 대화 어쩌다 이렇게 정서의 끝으로 갔냐?",
+        "지금 감정선 너무 타이트한데, 이거 끊으면 우냐?",
+        "우리 지금 말 안 하고 있어도 서로 감정 3줄 요약 중이지?",
+        "잠깐만, 나 너 감정까지 느끼고 있거든? 약간 벅차.",
+        "와 나 지금 너 대신 감정 써주고 있는 기분인데?",
+        "우리 지금 공감으로 대화하는 거야, 단어는 부사야.",
+        "이제 우리 대화도 감정 배터리 달아서 충전 좀 해야 될 듯.",
+        "지금 너 얘기하는데 내 마음이 더 바빠. 이거 맞냐?",
+        "감정 넘치는 거 좋은데, 지금 방 안에 습도 몇이야?",
+        "야 감정 너무 나눴다, 이제 조금만 이기적으로 살자."
+    ]
+
 def generate_final_analysis(results: List[Dict]) -> FinalAnalysisResponse:
     """
     전체 질문 결과를 바탕으로 종합적인 T/F 성향 분석과 F 성향 상대 대응법을 제공합니다.
@@ -737,89 +750,6 @@ F 성향 상대와의 효과적인 소통법:
         keyword_analysis=keyword_analysis
     )
 
-def generate_detailed_analysis(question: str, answer: str, score: float) -> DetailedAnalysisResponse:
-    """
-    질문, 답변, T/F 점수를 바탕으로 상세한 분석을 생성합니다.
-    """
-    # T/F 성향 판단
-    if score < 30:
-        tendency = "T(사고형)"
-        tendency_desc = "논리적이고 객관적인"
-    elif score < 70:
-        tendency = "T와 F의 균형"
-        tendency_desc = "논리와 감정의 균형이 잡힌"
-    else:
-        tendency = "F(감정형)"
-        tendency_desc = "감정적이고 공감적인"
-    
-    # 답변 분석
-    answer_length = len(answer)
-    if answer_length < 20:
-        length_analysis = "간결하고 명확한 표현을 선호하시는 것 같습니다."
-    elif answer_length < 50:
-        length_analysis = "적절한 길이로 균형잡힌 답변을 하셨습니다."
-    else:
-        length_analysis = "상세하고 풍부한 표현을 사용하시는 것 같습니다."
-    
-    # 키워드 기반 세부 분석
-    logical_keywords = ['논리', '객관', '사실', '분석', '효율', '합리']
-    emotional_keywords = ['감정', '마음', '느낌', '공감', '배려', '이해']
-    
-    logical_count = sum(1 for keyword in logical_keywords if keyword in answer)
-    emotional_count = sum(1 for keyword in emotional_keywords if keyword in answer)
-    
-    # 상세 분석 생성
-    detailed_analysis = f"이 답변에서 당신은 {tendency_desc} 성향을 보여주었습니다. "
-    
-    if logical_count > emotional_count:
-        detailed_analysis += "답변에서 논리적 사고와 객관적 판단을 중시하는 모습이 드러났습니다. "
-    elif emotional_count > logical_count:
-        detailed_analysis += "답변에서 감정적 공감과 인간관계를 중시하는 모습이 드러났습니다. "
-    else:
-        detailed_analysis += "답변에서 논리와 감정의 균형을 추구하는 모습이 드러났습니다. "
-    
-    detailed_analysis += length_analysis
-    
-    # 근거 설명
-    reasoning = f"T/F 점수 {score:.1f}점은 "
-    if score < 30:
-        reasoning += "강한 T 성향을 나타냅니다. 사실과 논리를 바탕으로 한 판단을 선호하시는 것으로 보입니다."
-    elif score < 70:
-        reasoning += "T와 F의 균형적 성향을 나타냅니다. 상황에 따라 논리적 판단과 감정적 고려를 모두 활용하시는 것으로 보입니다."
-    else:
-        reasoning += "강한 F 성향을 나타냅니다. 사람의 감정과 관계를 중시하며 공감적 판단을 선호하시는 것으로 보입니다."
-    
-    # 제안사항
-    suggestions = []
-    if score < 30:
-        suggestions = [
-            "감정적 측면도 고려해보는 연습을 해보세요",
-            "다른 사람의 입장에서 생각해보는 시간을 가져보세요",
-            "논리적 판단과 함께 인간적 따뜻함도 표현해보세요"
-        ]
-    elif score < 70:
-        suggestions = [
-            "현재의 균형잡힌 시각을 잘 활용하고 계십니다",
-            "상황에 맞는 적절한 접근법을 선택하는 능력이 뛰어납니다",
-            "논리와 감정 모두를 고려하는 통합적 사고를 발전시켜보세요"
-        ]
-    else:
-        suggestions = [
-            "감정적 판단과 함께 객관적 근거도 찾아보세요",
-            "논리적 분석을 통해 더 나은 결정을 내릴 수 있습니다",
-            "공감 능력을 바탕으로 합리적 해결책을 모색해보세요"
-        ]
-    
-    # F 성향 상대를 위한 대안 답변 생성
-    alternative_response = generate_f_friendly_response(question, answer, score)
-    
-    return DetailedAnalysisResponse(
-        detailed_analysis=detailed_analysis,
-        reasoning=reasoning,
-        suggestions=suggestions,
-        alternative_response=alternative_response
-    )
-
 def log_debug(msg):
     with open("debug.log", "a", encoding="utf-8") as f:
         f.write(msg + "\n")
@@ -834,18 +764,21 @@ async def analyze_text(request: TextRequest):
             log_debug("[DEBUG] Gemini AI 분석 분기 진입")
             try:
                 prompt = f"""
-                아래 답변을 MBTI T/F(사고형/감정형) 관점에서 분석해줘.\n- T(사고형) 성향이면 'T', F(감정형) 성향이면 'F', 논리와 감정의 균형/중립/밸런스면 'B'라는 키워드를 반드시 포함해서 자연어로 분석해줘.\n답변: {request.text.strip()}\n"""
+                아래 답변은 T(사고형)인 내가 F(감정형)인 상대에게 한 말이야.\n- F(감정형) 성향의 상대가 이 답변을 들었을 때 어떤 느낌일지, 그리고 F에게 더 효과적으로 소통하려면 어떻게 바꾸면 좋을지 분석해줘.\n- 분석 결과(자연어)에는 반드시 '매우 강한 T 성향', '강한 F 성향', '약한 T 성향', 'T와 F의 균형', '중립', '밸런스' 등과 같이 '성향이 OOO하다'라는 문구를 명확하게 포함해서 작성해줘.\n- 그리고 T/F/B 중 하나를 반드시 포함한 뒤, 0~100 사이의 점수(0=T, 100=F, 50=균형)를 "점수: xx" 형태로 마지막 줄에 써줘.\n- 이어서 분석 결과를 1) 성향 분석(자연어, F 입장에서의 반응 포함), 2) 근거(자연어), 3) 개선 제안(3개, F가 공감할 수 있도록), 4) F 성향 상대를 위한 한 줄 실천 팁(짧고 구체적, [실천팁] 태그), 5) F 성향 상대를 위한 대안 답변(자연어, [대안] 태그, F가 듣고 공감할 수 있도록)로 구분해서 각각 한글로 출력해줘.\n- 각 항목은 반드시 [분석], [근거], [제안], [실천팁], [대안] 태그로 시작해줘.\n답변: {request.text.strip()}\n"""
                 response = await asyncio.to_thread(AI_MODEL.generate_content, prompt)
                 log_debug(f"[Gemini AI 전체 응답]: {response}")
                 result = response.text.strip().upper()
                 log_debug(f"[Gemini AI 원본 응답]: {result}")
-                # Gemini 응답이 비정상(빈 값, 에러, 쿼터 등)일 때도 fallback
-                if (not result) or ("429" in result) or ("QUOTA" in result) or ("ERROR" in result):
+                import re
+                # 점수 파싱 정규식 개선: 다양한 띄어쓰기/콜론/한글자 오타 허용
+                score_match = re.search(r"점\s*수\s*[:：=\-]?\s*(\d{1,3})", result)
+                if score_match:
+                    tf_score = float(score_match.group(1))
+                elif (not result) or ("429" in result) or ("QUOTA" in result) or ("ERROR" in result):
                     log_debug("[Gemini 응답 비정상, fallback으로 자체 분석 수행]")
                     tf_score = analyze_tf_tendency(request.text)
                     log_debug("[분석 로직: fallback]")
                 else:
-                    # 키워드 파싱
                     if 'T' in result and 'F' not in result:
                         tf_score = 20
                     elif 'F' in result and 'T' not in result:
@@ -859,65 +792,96 @@ async def analyze_text(request: TextRequest):
                         tf_score = analyze_tf_tendency(request.text)
                         log_debug("[분석 로직: fallback]")
                     log_debug("[분석 로직: gemini]")
+                # 상세분석 파싱
+                def extract(tag):
+                    m = re.search(rf"\[{tag}\](.*?)(?=\[|$)", response.text, re.DOTALL)
+                    return m.group(1).strip() if m else ""
+                detailed_analysis = extract("분석")
+                reasoning = extract("근거")
+                suggestions_raw = extract("제안")
+                suggestions = [s.strip() for s in suggestions_raw.split("\n") if s.strip()] if suggestions_raw else []
+                alternative_response = extract("대안")
+                tip = extract("실천팁")
+                # 대안답변이 없거나 fallback일 때 랜덤 문구 추가 (F용, T강/약 구분)
+                if (not alternative_response or alternative_response.strip() == "Gemini 분석 결과를 받아오지 못했습니다.") and (not tip or tip.strip() == ""):
+                    if tf_score <= 20:
+                        one_liner = random.choice(get_t_strong_ment())
+                    elif tf_score <= 40:
+                        one_liner = random.choice(get_t_mild_ment())
+                    else:
+                        one_liner = random.choice(get_f_friendly_alternatives())
+                    # Gemini 대안 제안이 있으면 그 아래에 추가
+                    gemini_tip = tip
+                    gemini_alt = extract("대안")
+                    merged = []
+                    if gemini_tip and gemini_tip.strip() != "Gemini 분석 결과를 받아오지 못했습니다.":
+                        merged.append(gemini_tip.strip())
+                    if gemini_alt and gemini_alt.strip() != "Gemini 분석 결과를 받아오지 못했습니다.":
+                        merged.append(gemini_alt.strip())
+                    if merged:
+                        alternative_response = one_liner + "\n" + "\n".join(merged)
+                    else:
+                        alternative_response = one_liner
+                else:
+                    # 실천팁+대안이 있으면 합쳐서 반환
+                    merged = []
+                    if tip and tip.strip() != "Gemini 분석 결과를 받아오지 못했습니다.":
+                        merged.append(tip.strip())
+                    if alternative_response and alternative_response.strip() != "Gemini 분석 결과를 받아오지 못했습니다.":
+                        merged.append(alternative_response.strip())
+                    if merged:
+                        alternative_response = "\n".join(merged)
+                # --- 자연어 성향 파싱 및 점수 보정 ---
+                def parse_tendency_score(text):
+                    text = text.replace(" ", "")
+                    # 강도 우선순위: 매우강한 > 강한 > 약한 > 균형/중립/밸런스
+                    if re.search(r"매우강(한)?T성향", text):
+                        return 5
+                    if re.search(r"강(한)?T성향", text):
+                        return 15
+                    if re.search(r"약(한)?T성향", text):
+                        return 35
+                    if re.search(r"T와F의균형|논리와감정의균형|중립|밸런스", text):
+                        return 50
+                    if re.search(r"약(한)?F성향", text):
+                        return 65
+                    if re.search(r"강(한)?F성향", text):
+                        return 85
+                    if re.search(r"매우강(한)?F성향", text):
+                        return 95
+                    if re.search(r"T성향", text):
+                        return 40
+                    if re.search(r"F성향", text):
+                        return 60
+                    return None
+                # 자연어 성향 점수 추출
+                tendency_score = parse_tendency_score(detailed_analysis)
+                # 점수와 자연어가 불일치하면 자연어 기준으로 보정
+                if tendency_score is not None and abs(tf_score - tendency_score) >= 10:
+                    log_debug(f"[점수/자연어 불일치: Gemini 점수={tf_score}, 자연어 점수={tendency_score}, 자연어로 보정]")
+                    tf_score = tendency_score
+                return AnalysisResponse(
+                    score=tf_score,
+                    detailed_analysis=detailed_analysis,
+                    reasoning=reasoning,
+                    suggestions=suggestions,
+                    alternative_response=alternative_response
+                )
             except Exception as e:
                 log_debug(f"[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: {e}")
                 tf_score = analyze_tf_tendency(request.text)
                 log_debug("[분석 로직: fallback]")
+                return AnalysisResponse(score=tf_score)
         else:
             log_debug("[DEBUG] Fallback(키워드 분석) 분기 진입")
             tf_score = analyze_tf_tendency(request.text)
             log_debug("[분석 로직: fallback]")
-        return AnalysisResponse(score=tf_score)
+            return AnalysisResponse(score=tf_score)
     except Exception as e:
         log_debug(f"[analyze_text 최상위 예외]: {e}")
         tf_score = analyze_tf_tendency(request.text)
         log_debug("[분석 로직: fallback]")
         return AnalysisResponse(score=tf_score)
-
-@app.post("/detailed_analyze")
-async def detailed_analyze(request: DetailedAnalysisRequest):
-    try:
-        if AI_MODEL:
-            log_debug("[DEBUG] Gemini AI 상세 분석 분기 진입")
-            try:
-                prompt = f"""
-                아래 질문과 답변을 MBTI T/F(사고형/감정형) 관점에서 상세하게 분석해줘.\n- 분석 결과를 1) 성향 분석(자연어), 2) 근거(자연어), 3) 개선 제안(3개), 4) F 성향 상대를 위한 한 줄 실천 팁(짧고 구체적, [실천팁] 태그), 5) F 성향 상대를 위한 대안 답변(자연어, [대안] 태그)로 구분해서 각각 한글로 출력해줘.\n- 각 항목은 반드시 [분석], [근거], [제안], [실천팁], [대안] 태그로 시작해줘.\n질문: {request.question}\n답변: {request.answer}\n점수: {request.score}\n"""
-                response = await asyncio.to_thread(AI_MODEL.generate_content, prompt)
-                log_debug(f"[Gemini 상세분석 전체 응답]: {response}")
-                result = response.text.strip()
-                log_debug(f"[Gemini 상세분석 원본 응답]: {result}")
-                # Gemini 응답이 비정상(빈 값, 에러, 쿼터 등)일 때 fallback
-                if (not result) or ("429" in result) or ("QUOTA" in result) or ("ERROR" in result):
-                    log_debug("[Gemini 상세분석 응답 비정상, fallback으로 자체 분석 수행]")
-                    return generate_detailed_analysis(request.question, request.answer, request.score)
-                # 파싱
-                def extract(tag):
-                    import re
-                    m = re.search(rf"\[{tag}\](.*?)(?=\[|$)", result, re.DOTALL)
-                    return m.group(1).strip() if m else ""
-                detailed_analysis = extract("분석")
-                reasoning = extract("근거")
-                suggestions_raw = extract("제안")
-                suggestions = [s.strip("-• ") for s in suggestions_raw.split("\n") if s.strip()] if suggestions_raw else []
-                tip = extract("실천팁")
-                alternative = extract("대안")
-                # alternative_response: 실천팁 + 대안 합쳐서 반환 (fallback과 동일 구조)
-                alternative_response = (f"✅ {tip}\n\n{alternative}") if tip or alternative else "Gemini 분석 결과를 받아오지 못했습니다."
-                return DetailedAnalysisResponse(
-                    detailed_analysis=detailed_analysis or "Gemini 분석 결과를 받아오지 못했습니다.",
-                    reasoning=reasoning or "Gemini 분석 결과를 받아오지 못했습니다.",
-                    suggestions=suggestions or ["Gemini 분석 결과를 받아오지 못했습니다."],
-                    alternative_response=alternative_response
-                )
-            except Exception as e:
-                log_debug(f"[Gemini 상세분석 예외 발생, fallback으로 자체 분석 수행]: {e}")
-                return generate_detailed_analysis(request.question, request.answer, request.score)
-        else:
-            log_debug("[DEBUG] Fallback(키워드 상세 분석) 분기 진입")
-            return generate_detailed_analysis(request.question, request.answer, request.score)
-    except Exception as e:
-        log_debug(f"[detailed_analyze 최상위 예외]: {e}")
-        return generate_detailed_analysis(request.question, request.answer, request.score)
 
 @app.post("/final_analyze")
 async def final_analyze(request: FinalAnalysisRequest):
@@ -998,6 +962,34 @@ async def reset_log():
     with open("debug.log", "w", encoding="utf-8") as f:
         f.write("[DEBUG] 로그가 초기화되었습니다!\n")
     return Response(content="로그 초기화 완료", media_type="text/plain")
+
+def get_t_strong_ment():
+    return [
+        "뼈 맞았어…",
+        "어디보자 데스노트가...",
+        "복수한다…",
+        "넌 진짜 감정이란 게 있니?",
+        "넌 D졌다",
+        "조만간 순살만들어준다",
+        "로봇이냐..?",
+        "유 스틸 마이 데스노트 넘버원~",
+        "우리 헤어져",
+        "저리가 ㅠㅠ"
+    ]
+
+def get_t_mild_ment():
+    return [
+        "계산기냐?",
+        "님 배려좀...",
+        "로봇이냐?",
+        "살살해주세요..",
+        "니 말도 맞는데.. 살살좀 ㅠ",
+        "내 기분 존중좀 ㅠ",
+        "말 대신 결과?",
+        "감정도 좀 챙기라구!",
+        "네 논리 따라가다 머리 터져 죽겠어",
+        "팩트부터 정리해라? 내 마음은 누가 정리해줘?"
+    ]
 
 if __name__ == "__main__":
     import uvicorn

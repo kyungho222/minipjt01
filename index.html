@@ -805,9 +805,7 @@
 
         // 답변 제출
         async function submitAnswer() {
-            const answerInput = document.getElementById('answerInput');
-            const answer = answerInput.value.trim();
-            
+            const answer = document.getElementById('answerInput').value.trim();
             if (!answer) {
                 alert('답변을 입력해주세요.');
                 document.getElementById('loadingMessage').style.display = 'none'; // 로딩 메시지 숨김
@@ -818,6 +816,7 @@
             startLoadingDots(); // 로딩 점 애니메이션 시작
 
             try {
+                // API 호출
                 const response = await fetch(`${API_BASE_URL}/analyze`, {
                     method: 'POST',
                     headers: {
@@ -826,17 +825,24 @@
                     body: JSON.stringify({ text: answer })
                 });
 
-                const result = await response.json();
-                const currentQuestion = document.getElementById('question').textContent;
-                
+                if (!response.ok) {
+                    throw new Error('API 호출 실패');
+                }
+
+                const data = await response.json();
+                // detailed_analysis 등 상세 분석 결과도 저장
                 results.push({
-                    question: currentQuestion,
+                    question: document.getElementById('question').textContent,
                     answer: answer,
-                    score: result.score
+                    score: data.score,
+                    detailed_analysis: data.detailed_analysis,
+                    reasoning: data.reasoning,
+                    suggestions: data.suggestions,
+                    alternative_response: data.alternative_response
                 });
 
-                showResult(result.score);
-                
+                showResult(data.score);
+                // currentCount++;
             } catch (error) {
                 console.error('Error:', error);
                 alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');
@@ -993,11 +999,15 @@
                 }
 
                 const data = await response.json();
-                
+                // detailed_analysis 등 상세 분석 결과도 저장
                 results.push({
                     question: document.getElementById('question').textContent,
                     answer: answer,
-                    score: data.score
+                    score: data.score,
+                    detailed_analysis: data.detailed_analysis,
+                    reasoning: data.reasoning,
+                    suggestions: data.suggestions,
+                    alternative_response: data.alternative_response
                 });
 
                 showResult(data.score);
@@ -1017,9 +1027,9 @@
             
             updateCharacterExpression(tfScore);
             
-            // T와 F의 비율 계산 (10% 단위로 변경)
-            const tPercentage = Math.round((100 - tfScore) / 10) * 10;
-            const fPercentage = Math.round(tfScore / 10) * 10;
+            // T와 F의 비율 계산 (항상 T = 100-tfScore, F = tfScore)
+            const tPercentage = 100 - tfScore;
+            const fPercentage = tfScore;
             
             // 그래프 표시 (텍스트와 수치 표현)
             let resultText = '';
@@ -1054,20 +1064,19 @@
             
             // 리뷰 아이콘 표시
             document.getElementById('reviewIcon').style.display = 'block';
+            // 분석중 메시지 항상 숨김
+            document.getElementById('loadingMessage').style.display = 'none';
             stopLoadingDots(); // 로딩 점 애니메이션 중지
         }
 
         // 리뷰 표시
-        async function showReview() {
+        function showReview() {
             const modal = document.getElementById('reviewModal');
             const content = document.getElementById('reviewContent');
-            
             // 항상 최신 답변 리뷰를 참조하도록 인덱스 수정
             const idx = results.length - 1;
-            
             // 디버깅 정보 출력
             console.log('showReview 호출 - idx:', idx, 'results 길이:', results?.length, 'results:', results);
-            
             // 안전성 검사: 유효한 결과가 있는지 확인
             if (!results || results.length === 0 || idx < 0) {
                 content.innerHTML = `
@@ -1079,9 +1088,7 @@
                 modal.style.display = 'block';
                 return;
             }
-            
             const currentResult = results[idx];
-            
             // currentResult가 유효한지 확인
             if (!currentResult || !currentResult.question || !currentResult.answer) {
                 content.innerHTML = `
@@ -1093,83 +1100,57 @@
                 modal.style.display = 'block';
                 return;
             }
-            
-            // 로딩 상태 표시
+            // 상세 분석 결과가 없는 경우 예외 처리
+            if (!currentResult.detailed_analysis) {
+                content.innerHTML = `
+                    <div class="review-section">
+                        <h3>T/F 분석</h3>
+                        <p><strong>질문:</strong> ${currentResult.question}</p>
+                        <p><strong>답변:</strong> ${currentResult.answer}</p>
+                        <p><strong>분석 결과:</strong> <span style="color: #dc3545;">상세 분석 결과가 없습니다.</span></p>
+                    </div>
+                `;
+                modal.style.display = 'block';
+                return;
+            }
+            // 상세 분석 결과 표시
             content.innerHTML = `
                 <div class="review-section">
                     <h3>T/F 분석</h3>
                     <p><strong>질문:</strong> ${currentResult.question}</p>
                     <p><strong>답변:</strong> ${currentResult.answer}</p>
-                    <p><strong>분석 결과:</strong> <span style="color: #666;">AI가 분석 중입니다...</span></p>
+                    <div style="margin-top: 1rem;">
+                        <h4 style="color: #2c3e50; margin-bottom: 0.5rem;">💬 F 성향 상대를 위한 답변 제안</h4>
+                        <div style="background: #e8f5e8; padding: 1rem; border-radius: 8px; border-left: 4px solid #28a745; line-height: 1.6;">
+                            ${(() => {
+                                const alt = (currentResult.alternative_response || '').replace(/\n/g, '<br>');
+                                const firstLine = alt.split('<br>')[0];
+                                const rest = alt.split('<br>').slice(1).join('<br>');
+                                return `<div style='font-weight:bold; color:#ff0000; margin-bottom:0.5em;'>${firstLine}</div>` + (rest ? `<div>${rest}</div>` : '');
+                            })()}
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem;">
+                        <h4 style="color: #2c3e50; margin-bottom: 0.5rem;">📋 상세 분석</h4>
+                        <p style="line-height: 1.6; background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            ${currentResult.detailed_analysis}
+                        </p>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <h4 style="color: #2c3e50; margin-bottom: 0.5rem;">🔍 분석 근거</h4>
+                        <p style="line-height: 1.6; background: #fff3cd; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            ${currentResult.reasoning}
+                        </p>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <h4 style="color: #2c3e50; margin-bottom: 0.5rem;">💡 개선 제안</h4>
+                        <ul style="background: #d1ecf1; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            ${(currentResult.suggestions || []).map(suggestion => `<li style="margin-bottom: 0.5rem;">${suggestion}</li>`).join('')}
+                        </ul>
+                    </div>
                 </div>
             `;
-            
             modal.style.display = 'block';
-            
-            try {
-                // AI 상세 분석 요청
-                const response = await fetch(`${API_BASE_URL}/detailed_analyze`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        question: currentResult.question,
-                        answer: currentResult.answer,
-                        score: currentResult.score
-                    })
-                });
-
-                const detailedResult = await response.json();
-                
-                // 상세 분석 결과 표시
-                content.innerHTML = `
-                    <div class="review-section">
-                        <h3>T/F 분석</h3>
-                        <p><strong>질문:</strong> ${currentResult.question}</p>
-                        <p><strong>답변:</strong> ${currentResult.answer}</p>
-                        
-                        <div style="margin-top: 1.5rem;">
-                            <h4 style="color: #2c3e50; margin-bottom: 0.5rem;">📋 상세 분석</h4>
-                            <p style="line-height: 1.6; background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                                ${detailedResult.detailed_analysis}
-                            </p>
-                        </div>
-                        
-                        <div style="margin-top: 1rem;">
-                            <h4 style="color: #2c3e50; margin-bottom: 0.5rem;">🔍 분석 근거</h4>
-                            <p style="line-height: 1.6; background: #fff3cd; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                                ${detailedResult.reasoning}
-                            </p>
-                        </div>
-                        
-                                                 <div style="margin-top: 1rem;">
-                             <h4 style="color: #2c3e50; margin-bottom: 0.5rem;">💡 개선 제안</h4>
-                             <ul style="background: #d1ecf1; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                                 ${detailedResult.suggestions.map(suggestion => `<li style="margin-bottom: 0.5rem;">${suggestion}</li>`).join('')}
-                             </ul>
-                         </div>
-                         
-                         <div style="margin-top: 1rem;">
-                             <h4 style="color: #2c3e50; margin-bottom: 0.5rem;">💬 F 성향 상대를 위한 답변 제안</h4>
-                             <div style="background: #e8f5e8; padding: 1rem; border-radius: 8px; border-left: 4px solid #28a745; line-height: 1.6;">
-                                 ${detailedResult.alternative_response.replace(/\n/g, '<br>')}
-                             </div>
-                         </div>
-                     </div>
-                 `;
-                
-            } catch (error) {
-                console.error('Error fetching detailed analysis:', error);
-                content.innerHTML = `
-                    <div class="review-section">
-                        <h3>T/F 분석</h3>
-                        <p><strong>질문:</strong> ${currentResult.question}</p>
-                        <p><strong>답변:</strong> ${currentResult.answer}</p>
-                        <p><strong>분석 결과:</strong> <span style="color: #dc3545;">분석 중 오류가 발생했습니다. 기본 분석: ${getReviewText(currentResult.score)}</span></p>
-                    </div>
-                `;
-            }
         }
 
         // 리뷰 닫기
