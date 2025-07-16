@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/reset.css">
+    <script src="/static/js/main.js"></script>
+    <title>너 T야?</title>
+</head>
+<body>
+<main>
+    <div id="main_title">
+        <div id="main_logo"></div>
+        <!-- <h1>너 T야?</h1> -->
+    </div>
+    <div id="main_content">
+        <div class="main_content_box">
+            <p>문제 개수를 선택하세요.</p>
+            <div id="question_count">
+                <label class="question_count_box">
+                    <input type="checkbox" id="question_count_1" name="question_count" value="1">
+                    <span>1개</span>
+                </label>
+                <label class="question_count_box">
+                    <input type="checkbox" id="question_count_3" name="question_count" value="3">
+                    <span>3개</span>
+                </label>
+                <label class="question_count_box">
+                    <input type="checkbox" id="question_count_5" name="question_count" value="5">
+                    <span>5개</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="main_content_box">
+            <p>문제 타입을 선택하세요.</p>
+            <div id="question_type">
+                <label class="question_type_box">
+                    <input type="checkbox" id="question_meme" name="meme" value="meme">
+                    <span>인터넷 밈(json하드코딩)</span>
+                </label>
+                <label class="question_type_box">
+                    <input type="checkbox" id="question_ai" name="aiSettings" value="aiSettings">
+                    <span>AI 맞춤형(Gemini 연동)</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <input type="button" value="시작" id="start_button">
+</main>
+</body>
