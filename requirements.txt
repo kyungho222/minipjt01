@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 fastapi
 uvicorn
 transformers
@@ -6,13 +5,4 @@ torch
 pydantic
 google-generativeai
 requests
-=======
-fastapi
-uvicorn
-transformers
-torch
-pydantic
-google-generativeai
-requests
->>>>>>> 7d64aaa (update)
 python-dotenv 

@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # MBTI T/F 성향 분석기
 
 이 프로젝트는 사용자의 텍스트 응답을 분석하여 MBTI의 T(사고형)/F(감정형) 성향을 판단하는 웹 애플리케이션입니다.
@@ -38,7 +38,7 @@ http://localhost:5500
 
 - Frontend: HTML, CSS, JavaScript
 - Backend: FastAPI (Python)
-=======
+
 # MBTI T/F 성향 분석기
 
 이 프로젝트는 사용자의 텍스트 응답을 분석하여 MBTI의 T(사고형)/F(감정형) 성향을 판단하는 웹 애플리케이션입니다.
@@ -78,5 +78,4 @@ http://localhost:5500
 
 - Frontend: HTML, CSS, JavaScript
 - Backend: FastAPI (Python)
->>>>>>> 7d64aaa (update)
 - AI Model: Hugging Face Transformers 
