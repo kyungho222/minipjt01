@@ -44,8 +44,18 @@ document.getElementById('reviewBtn').onclick = async function() {
   }
 };
 document.getElementById('nextBtn').onclick = function() {
-  alert('다음 질문으로 이동');
-  // location.href = 'next.html'; // 실제 다음 페이지로 이동
+  // 남은 문제가 있는지 localStorage에서 currentCount, maxCount를 확인
+  let currentCount = parseInt(localStorage.getItem('currentCount') || '0');
+  let maxCount = parseInt(localStorage.getItem('maxCount') || '0');
+  currentCount++;
+  localStorage.setItem('currentCount', currentCount);
+  if (currentCount < maxCount) {
+    // 남은 문제가 있으면 문제 화면으로 이동
+    window.location.href = '/static/html/question.html';
+  } else {
+    // 남은 문제가 없으면 최종 결과 화면으로 이동
+    window.location.href = '/index2.html';
+  }
 };
 document.getElementById('modalCloseBtn').onclick = function() {
   document.getElementById('reviewDetailModal').style.display = 'none';

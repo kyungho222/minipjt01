@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>MBTI 답변 결과</title>
-  <link rel="stylesheet" href="answer.css">
+  <link rel="stylesheet" href="/answer/answer.css">
 </head>
 <body>
-  <img src="../images/textbar1.png" alt="상단바" style="width:100vw; height:160px; display:block;">
+  <img src="/images/textbar1.png" alt="상단바" style="width:100vw; height:160px; display:block;">
   <div class="question-box">
     <div class="question-text" id="questionText">“너 T야?”</div>
     <div class="bar-container">
@@ -18,16 +18,16 @@
       <span class="bar-value" id="barValue">80</span>
     </div>
   </div>
-  <img src="../images/Simple_angry.png" alt="캐릭터" class="character" id="characterImg">
+  <img src="/images/Simple_angry.png" alt="캐릭터" class="character" id="characterImg">
   <!-- 하단바 영역 -->
   <div style="width:80%; max-width:4000px; margin:0px auto 0 auto; position:relative;">
-    <img src="../images/textbar2.png" alt="하단바" style="width:100%; display:block;">
+    <img src="/images/textbar2.png" alt="하단바" style="width:100%; display:block;">
     <div style="position:absolute; bottom:1%; right:1%; margin-bottom:1%; margin-right:1%; display:flex; align-items:center; justify-content:center; gap:1%;">
       <button class="btn review" id="reviewBtn" style="background:none; border:none; padding:0; cursor:pointer;">
-        <img src="../images/note_button.png" alt="리뷰" style="height:48px; width:auto;">
+        <img src="/images/note_button.png" alt="리뷰" style="height:48px; width:auto;">
       </button>
       <button class="btn next" id="nextBtn" style="background:none; border:none; padding:0; cursor:pointer; position:relative;">
-        <img src="../images/button2.png" alt="다음" style="height:48px; width:auto;">
+        <img src="/images/button2.png" alt="다음" style="height:48px; width:auto;">
         <span style="position:absolute; left:0; top:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:1.2em; pointer-events:none;">다음</span>
       </button>
     </div>
@@ -35,7 +35,7 @@
   <!-- note.png 모달 -->
   <div id="reviewDetailModal" class="modal-bg" style="display:none; align-items:center; justify-content:center;">
     <div style="position:relative; display:flex; align-items:center; justify-content:center;">
-      <img src="../images/note.png" alt="노트" style="width:420px; max-width:90vw; display:block;">
+      <img src="/images/note.png" alt="노트" style="width:420px; max-width:90vw; display:block;">
       <div style="position:absolute; top:40px; left:0; width:100%; padding:0 32px; box-sizing:border-box; text-align:center;">
         <div class="modal-question" id="modalQuestion" style="color:#222; font-weight:bold; margin-bottom:12px;">"왜 이렇게 말수가 줄었어?"</div>
         <div class="modal-answer" id="modalAnswer" style="background:none; color:#222; margin-bottom:18px;">요즘 생각이 많아져서 그래</div>
@@ -46,6 +46,6 @@
       </div>
     </div>
   </div>
-  <script src="answer.js"></script>
+  <script src="/answer/answer.js"></script>
 </body>
 </html>
