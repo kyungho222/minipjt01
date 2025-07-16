@@ -928,3 +928,57 @@ F는 대화를 통해 공감과 이해를 받고 싶어 합니다. "ㅇ"라는 �
 [대안] "응, 네 말 잘 들었어. 그래서 지금 기분이 어때?"
 
 점수: 5
+[DEBUG] analyze_text 함수 진입!
+[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
+    model_name='models/gemini-1.5-pro-latest',
+    generation_config={},
+    safety_settings={},
+    tools=None,
+    system_instruction=None,
+    cached_content=None
+)
+[DEBUG] Gemini AI 분석 분기 진입
+[Gemini AI 전체 응답]: response:
+GenerateContentResponse(
+    done=True,
+    iterator=None,
+    result=protos.GenerateContentResponse({
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "\ub2f5\ubcc0\uc774 \"\u3147\" \ud558\ub098\ubfd0\uc774\ub77c\uba74, \ub9e4\uc6b0 \uac15\ud55c T \uc131\ud5a5\uc758 \ubb34\ub69d\ub69d\ud568\uacfc \uac04\uacb0\ud568\uc774 \ub4dc\ub7ec\ub0a9\ub2c8\ub2e4. \uac15\ud55c F \uc131\ud5a5\uc758 \uc0c1\ub300\ub294 \uc774 \ub2f5\ubcc0\uc744 \ub4e3\uace0 \ub9e4\uc6b0 \ub2f9\ud669\uc2a4\ub7fd\uace0, \ubb34\uc2dc\ub2f9\ud588\ub2e4\ub294 \ub290\ub08c\uc744 \ubc1b\uc744 \uac00\ub2a5\uc131\uc774 \ub192\uc2b5\ub2c8\ub2e4. \ub9c8\uce58 \uc790\uc2e0\uc758 \ub9d0\uc5d0 \uad00\uc2ec\uc774 \uc5c6\uac70\ub098, \ub300\ud654\ub97c \uc774\uc5b4\uac08 \uc758\uc9c0\uac00 \uc5c6\ub294 \uac83\ucc98\ub7fc \ub290\uaef4\uc9c8 \uc218 \uc788\uc2b5\ub2c8\ub2e4. \ud2b9\ud788 \uc0c1\ub300\uac00 \uace0\ubbfc\uc774\ub098 \uc5b4\ub824\uc6c0\uc744 \uc774\uc57c\uae30\ud558\ub294 \uc0c1\ud669\uc774\uc5c8\ub2e4\uba74 \ub354\uc6b1 \ud070 \uc0c1\ucc98\ub97c \ubc1b\uc744 \uc218 \uc788\uc2b5\ub2c8\ub2e4.\n\n\n[\ubd84\uc11d] \uc0c1\ub300\ubc29\uc758 \ub9d0\uc5d0 \ub300\ud55c \uacf5\uac10\uc774\ub098 \uac10\uc815\uc801\uc778 \uc9c0\uc9c0\uac00 \uc804\ud600 \ub4dc\ub7ec\ub098\uc9c0 \uc54a\uc544, \uac15\ud55c F \uc131\ud5a5\uc758 \uc0c1\ub300\ub294 \ub300\ud654\uac00 \ub2e8\uc808\ub418\uc5c8\ub2e4\uace0 \ub290\ub07c\uace0 \uc18c\uc678\uac10\uc744 \ub290\ub084 \uac83\uc785\ub2c8\ub2e4. \uc774\ub294 \ub9e4\uc6b0 \uac15\ud55c T \uc131\ud5a5\uc758 \uc804\ud615\uc801\uc778 \ubc18\uc751\uc73c\ub85c, \uc0ac\uc2e4 \uc804\ub2ec\uc5d0\ub9cc \uc9d1\uc911\ud558\uace0 \uac10\uc815\uc801\uc778 \uce21\uba74\uc740 \uace0\ub824\ud558\uc9c0 \uc54a\uc740 \uacb0\uacfc\uc785\ub2c8\ub2e4.\n\n[\uadfc\uac70] \"\u3147\"\uc774\ub77c\ub294 \ub2f5\ubcc0\uc740 \ub2e8\uc21c\ud55c \uc0ac\uc2e4 \ud655\uc778\uc774\ub098 \ub3d9\uc758 \uc678\uc5d0\ub294 \uc5b4\ub5a0\ud55c \uac10\uc815\uc774\ub098 \uc758\uacac\ub3c4 \ub2f4\uace0 \uc788\uc9c0 \uc54a\uc2b5\ub2c8\ub2e4.  F \uc131\ud5a5\uc740 \ub300\ud654\uc5d0\uc11c \uacf5\uac10\uacfc \uc815\uc11c\uc801 \uc5f0\uacb0\uc744 \uc911\uc694\uc2dc\ud558\uae30 \ub54c\ubb38\uc5d0, \uc774\ub7ec\ud55c \uc9e7\uc740 \ub2f5\ubcc0\uc740 \uc0c1\ub300\uc758 \uac10\uc815\uc744 \ubb34\uc2dc\ud558\ub294 \uac83\ucc98\ub7fc \ub290\uaef4\uc9c8 \uc218 \uc788\uc2b5\ub2c8\ub2e4. \ud2b9\ud788 \uc0c1\ub300\uac00 \uc704\ub85c\ub098 \uacf5\uac10\uc744 \ubc14\ub77c\ub294 \uc0c1\ud669\uc774\ub77c\uba74, \uc774 \ub2f5\ubcc0\uc740 \uc624\ud788\ub824 \uc0c1\ud669\uc744 \uc545\ud654\uc2dc\ud0ac \uc218 \uc788\uc2b5\ub2c8\ub2e4.\n\n[\uc81c\uc548]\n1. \uc0c1\ub300\uc758 \ub9d0\uc744 \uacbd\uccad\ud558\uace0 \uc788\ub2e4\ub294 \uac83\uc744 \ud45c\ud604\ud558\uae30 \uc704\ud574, \ub2f5\ubcc0 \uc804\uc5d0 \"\ub124, \ub9d0\uc500 \uc798 \ub4e4\uc5c8\uc2b5\ub2c8\ub2e4\" \uc640 \uac19\uc740 \ud45c\ud604\uc744 \ub367\ubd99\uc785\ub2c8\ub2e4.\n2. \uc0c1\ub300\uc758 \uac10\uc815\uc5d0 \uacf5\uac10\ud558\ub294 \ud45c\ud604\uc744 \ucd94\uac00\ud569\ub2c8\ub2e4. \uc608\ub97c \ub4e4\uc5b4 \uc0c1\ub300\uac00 \uc2ac\ud508 \uc774\uc57c\uae30\ub97c \ud588\ub2e4\uba74 \"\ud798\ub4dc\uc168\uaca0\ub124\uc694\" \uc640 \uac19\uc740 \uacf5\uac10 \ud45c\ud604\uc744 \ub367\ubd99\uc77c \uc218 \uc788\uc2b5\ub2c8\ub2e4.\n3. \uc9e7\uc740 \ub2f5\ubcc0 \ub300\uc2e0, \uc0c1\ub300\uc758 \uc774\uc57c\uae30\ub97c  \uc694\uc57d\ud558\uac70\ub098 \uc9c8\ubb38\uc744 \ub358\uc838 \ub300\ud654\ub97c \uc774\uc5b4\ub098\uac00\ub294 \ub178\ub825\uc744 \ubcf4\uc5ec\uc90d\ub2c8\ub2e4.\n\n[\uc2e4\ucc9c\ud301] \ub2f5\ubcc0\ud558\uae30 \uc804\uc5d0 3\ucd08\ub9cc \uc0dd\uac01\ud558\uace0 \uc0c1\ub300\ubc29\uc758 \uac10\uc815\uc744 \ud5e4\uc544\ub824\ubcf4\uc790.\n\n[\ub300\uc548] \uc0c1\ub300\ubc29\uc758 \ub9d0\uc5d0 \ub530\ub77c \ub2e4\ub974\uaca0\uc9c0\ub9cc, \uc608\ub97c \ub4e4\uc5b4 \uc0c1\ub300\uac00 \uc5b4\ub5a4 \uc81c\uc548\uc744 \ud588\uc744 \uacbd\uc6b0, \"\ub124, \uc54c\uaca0\uc2b5\ub2c8\ub2e4. \uc88b\uc740 \uc81c\uc548\uc778 \uac83 \uac19\ub124\uc694.  \uc880 \ub354 \uc0dd\uac01\ud574\ubcf4\uace0 \ub2e4\uc2dc \uc774\uc57c\uae30\ud574\ub3c4 \ub420\uae4c\uc694?\" \uc640 \uac19\uc774 \uae0d\uc815\uc801\uc778 \ubc18\uc751\uacfc \ud568\uaed8 \ucd94\uac00\uc801\uc778 \uc124\uba85\uc744 \ub367\ubd99\uc77c \uc218 \uc788\uc2b5\ub2c8\ub2e4.  \ud639\uc740 \uc0c1\ub300\uac00 \uace0\ubbfc\uc744 \ud138\uc5b4\ub193\uc558\ub2e4\uba74 \"\ubb34\uc2a8 \uc77c\uc778\uc9c0 \uc790\uc138\ud788 \uc774\uc57c\uae30\ud574 \uc904 \uc218 \uc788\uc744\uae4c\uc694?  \uc81c\uac00 \ub3c4\uc6b8 \uc218 \uc788\ub294 \uc77c\uc774 \uc788\uc73c\uba74 \ub3d5\uace0 \uc2f6\uc5b4\uc694.\" \uc640 \uac19\uc774 \uacf5\uac10\uacfc \uc9c0\uc9c0 \uc758\uc0ac\ub97c \ud45c\ud604\ud558\ub294 \uac83\uc774 \uc88b\uc2b5\ub2c8\ub2e4.\n\n\uc810\uc218: 0\n"
+              }
+            ],
+            "role": "model"
+          },
+          "finish_reason": "STOP",
+          "avg_logprobs": -0.18392819011589293
+        }
+      ],
+      "usage_metadata": {
+        "prompt_token_count": 415,
+        "candidates_token_count": 694,
+        "total_token_count": 1109
+      },
+      "model_version": "gemini-1.5-pro-002"
+    }),
+)
+[Gemini AI 원본 응답]: 답변이 "ㅇ" 하나뿐이라면, 매우 강한 T 성향의 무뚝뚝함과 간결함이 드러납니다. 강한 F 성향의 상대는 이 답변을 듣고 매우 당황스럽고, 무시당했다는 느낌을 받을 가능성이 높습니다. 마치 자신의 말에 관심이 없거나, 대화를 이어갈 의지가 없는 것처럼 느껴질 수 있습니다. 특히 상대가 고민이나 어려움을 이야기하는 상황이었다면 더욱 큰 상처를 받을 수 있습니다.
+
+
+[분석] 상대방의 말에 대한 공감이나 감정적인 지지가 전혀 드러나지 않아, 강한 F 성향의 상대는 대화가 단절되었다고 느끼고 소외감을 느낄 것입니다. 이는 매우 강한 T 성향의 전형적인 반응으로, 사실 전달에만 집중하고 감정적인 측면은 고려하지 않은 결과입니다.
+
+[근거] "ㅇ"이라는 답변은 단순한 사실 확인이나 동의 외에는 어떠한 감정이나 의견도 담고 있지 않습니다.  F 성향은 대화에서 공감과 정서적 연결을 중요시하기 때문에, 이러한 짧은 답변은 상대의 감정을 무시하는 것처럼 느껴질 수 있습니다. 특히 상대가 위로나 공감을 바라는 상황이라면, 이 답변은 오히려 상황을 악화시킬 수 있습니다.
+
+[제안]
+1. 상대의 말을 경청하고 있다는 것을 표현하기 위해, 답변 전에 "네, 말씀 잘 들었습니다" 와 같은 표현을 덧붙입니다.
+2. 상대의 감정에 공감하는 표현을 추가합니다. 예를 들어 상대가 슬픈 이야기를 했다면 "힘드셨겠네요" 와 같은 공감 표현을 덧붙일 수 있습니다.
+3. 짧은 답변 대신, 상대의 이야기를  요약하거나 질문을 던져 대화를 이어나가는 노력을 보여줍니다.
+
+[실천팁] 답변하기 전에 3초만 생각하고 상대방의 감정을 헤아려보자.
+
+[대안] 상대방의 말에 따라 다르겠지만, 예를 들어 상대가 어떤 제안을 했을 경우, "네, 알겠습니다. 좋은 제안인 것 같네요.  좀 더 생각해보고 다시 이야기해도 될까요?" 와 같이 긍정적인 반응과 함께 추가적인 설명을 덧붙일 수 있습니다.  혹은 상대가 고민을 털어놓았다면 "무슨 일인지 자세히 이야기해 줄 수 있을까요?  제가 도울 수 있는 일이 있으면 돕고 싶어요." 와 같이 공감과 지지 의사를 표현하는 것이 좋습니다.
+
+점수: 0

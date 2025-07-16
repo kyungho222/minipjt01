@@ -58,9 +58,17 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 105px;
+    margin-top: 60px;
     gap: 80px;
     color: rgb(254,157,41);
+    background-color: rgba(0, 0, 0, 0.4) !important;
+    border-radius: 8px;
+    padding: 40px 60px 0px 60px;
+    min-height: 100px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    box-sizing: border-box;
+    z-index: 1;
 }
 
 .main_content_box {
@@ -125,6 +133,7 @@ text-shadow:
     height: 50px;
     color: #fde4b0;
     background-color: rgb(254,157,41);
+    margin-top: 20px;
     font-size: 24px;
     font-weight: bold;
     text-align: center;
