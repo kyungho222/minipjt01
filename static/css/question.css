@@ -1,0 +1,164 @@
+@font-face {
+    font-family: 'HeirofLight';
+    src: url('../fonts/HeirofLightRegular.ttf') format('truetype'),
+         url('../fonts/HeirofLightOTFRegular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'HeirofBold';
+    src: url('../fonts/HeirofLightBold.ttf') format('truetype'),
+         url('../fonts/HeirofLightOTFBold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+main {
+    width: 100%;
+    min-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-image: url(/static/images/school.png);
+    background-size: contain;
+    font-family: 'HeirofLight', sans-serif;
+}
+
+#question_content {
+    width: 100%;
+    min-width: 1280px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #fde4b0;
+    border-bottom: 5px solid rgb(250,145,43);
+}
+
+#question_content p {
+    font-size: 24px;
+    font-weight: bold;
+    font-family: 'HeirofLight', sans-serif;
+    color: black;
+}
+
+#character {
+    width: 341px;   
+    height: 405px;
+    background-image: url(/static/images/Base.png);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin-top: 54px;
+}
+
+#user_input {
+    min-width: 1200px;
+    height: 204px;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(43,93,84,0.8);
+    color: white;
+    border-radius: 8px;
+    border: 5px solid rgb(250,145,43);
+    padding: 24px;
+    margin-bottom: 23px;
+}
+
+#user_name {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 
+        -1px -1px 0 black,
+        1px -1px 0 black,
+        -1px 1px 0 black,
+        1px 1px 0 black;
+}
+
+#user_input_line {
+    margin-top: 10px;
+    width: 80px;
+    height: 1px;
+    background-color: white;
+}
+
+#user_input_text {
+    margin-top: 40px;
+    border: none;
+    background-color: transparent;
+    outline: none;
+    color: white;
+    font-size: 18px;
+    font-family: 'HeirofLight', sans-serif;
+    
+    /* 자동완성 스타일 제거 */
+    -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+    -webkit-text-fill-color: white !important;
+    box-shadow: 0 0 0 1000px transparent inset !important;
+}
+
+#user_input_text:-webkit-autofill,
+#user_input_text:-webkit-autofill:hover,
+#user_input_text:-webkit-autofill:focus,
+#user_input_text:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+    -webkit-text-fill-color: white !important;
+    box-shadow: 0 0 0 1000px transparent inset !important;
+    background-color: transparent !important;
+    color: white !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* 추가적인 자동완성 텍스트 색상 강제 */
+#user_input_text:-webkit-autofill::first-line {
+    color: white !important;
+    -webkit-text-fill-color: white !important;
+}
+
+#user_input_text:-webkit-autofill::selection {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+}
+
+/* 모든 상태에서 텍스트 색상 강제 */
+#user_input_text,
+#user_input_text:focus,
+#user_input_text:active,
+#user_input_text:hover {
+    color: white !important;
+    -webkit-text-fill-color: white !important;
+}
+
+#user_input_text::placeholder {
+    color: white;
+    opacity: 0.7;
+    font-family: 'HeirofLight', sans-serif;
+}
+
+#user_input_button {
+    margin-left: 1000px;
+    margin-top: 40px;
+    background-color: rgb(254,157,41);
+    box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 0.4);
+    color: #fde4b0;
+    font-size: 24px;
+    font-weight: bold;
+    width: 120px;
+    height: 50px;
+    border: none;
+    outline: none;
+    border-radius: 99px;
+    cursor: pointer;
+    font-family: 'HeirofBold', sans-serif;
+}
+
+#user_input_button:hover {
+    background-color: rgb(250,145,43);
+    color:white;
+    transition: 0.2s background-color ease-in-out;
+}
