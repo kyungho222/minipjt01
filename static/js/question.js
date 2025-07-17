@@ -17,6 +17,148 @@ function getParamsFromURL() {
     };
 }
 
+// 질문 로딩 모달 표시
+function showQuestionLoadingModal() {
+    const modal = document.getElementById('question_loading_modal');
+    if (modal) {
+        modal.style.display = 'block';
+    }
+}
+
+// 질문 로딩 모달 숨기기
+function hideQuestionLoadingModal() {
+    const modal = document.getElementById('question_loading_modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// 분석 모달 표시
+function showAnalysisModal() {
+    const modal = document.getElementById('analysis_modal');
+    if (modal) {
+        modal.style.display = 'block';
+    }
+}
+
+// 분석 모달 숨기기
+function hideAnalysisModal() {
+    const modal = document.getElementById('analysis_modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// 마이크 모달 표시
+function showMicModal() {
+    const modal = document.getElementById('mic_modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        resetMicModal();
+    }
+}
+
+// 마이크 모달 숨기기
+function hideMicModal() {
+    const modal = document.getElementById('mic_modal');
+    if (modal) {
+        modal.style.display = 'none';
+        stopRecording();
+    }
+}
+
+// 마이크 모달 초기화
+function resetMicModal() {
+    const statusText = document.getElementById('mic_status_text');
+    const recognizedResult = document.getElementById('recognized_result');
+    const startButton = document.getElementById('start_recording');
+    const stopButton = document.getElementById('stop_recording');
+    
+    if (statusText) statusText.textContent = '마이크 버튼을 눌러 음성 인식을 시작하세요';
+    if (recognizedResult) recognizedResult.textContent = '';
+    if (startButton) startButton.style.display = 'inline-block';
+    if (stopButton) stopButton.style.display = 'none';
+}
+
+// 음성 인식 변수
+let recognition = null;
+let isRecording = false;
+
+// 음성 인식 시작
+function startRecording() {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert('이 브라우저는 음성 인식을 지원하지 않습니다.');
+        return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    
+    recognition.lang = 'ko-KR';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    
+    recognition.onstart = function() {
+        isRecording = true;
+        const statusText = document.getElementById('mic_status_text');
+        const startButton = document.getElementById('start_recording');
+        const stopButton = document.getElementById('stop_recording');
+        
+        if (statusText) statusText.textContent = '음성을 인식하고 있습니다...';
+        if (startButton) startButton.style.display = 'none';
+        if (stopButton) stopButton.style.display = 'inline-block';
+    };
+    
+    recognition.onresult = function(event) {
+        const result = event.results[0][0].transcript;
+        const recognizedResult = document.getElementById('recognized_result');
+        const statusText = document.getElementById('mic_status_text');
+        
+        if (recognizedResult) recognizedResult.textContent = result;
+        if (statusText) statusText.textContent = '음성 인식이 완료되었습니다!';
+    };
+    
+    recognition.onerror = function(event) {
+        console.error('음성 인식 오류:', event.error);
+        const statusText = document.getElementById('mic_status_text');
+        if (statusText) statusText.textContent = '음성 인식 중 오류가 발생했습니다.';
+        stopRecording();
+    };
+    
+    recognition.onend = function() {
+        isRecording = false;
+        const startButton = document.getElementById('start_recording');
+        const stopButton = document.getElementById('stop_recording');
+        
+        if (startButton) startButton.style.display = 'inline-block';
+        if (stopButton) stopButton.style.display = 'none';
+    };
+    
+    recognition.start();
+}
+
+// 음성 인식 중지
+function stopRecording() {
+    if (recognition && isRecording) {
+        recognition.stop();
+        isRecording = false;
+    }
+}
+
+// 인식된 텍스트 적용
+function applyRecognizedText() {
+    const recognizedResult = document.getElementById('recognized_result');
+    const userInput = document.getElementById('user_input_text');
+    
+    if (recognizedResult && userInput) {
+        const recognizedText = recognizedResult.textContent.trim();
+        if (recognizedText) {
+            userInput.value = recognizedText;
+            hideMicModal();
+        }
+    }
+}
+
 // 질문 데이터 로드
 async function loadQuestions() {
     try {
@@ -47,18 +189,22 @@ async function loadQuestions() {
         } else if (Array.isArray(data)) {
             questions = data;
         } else {
-            throw new Error('질문 데이터 형식이 올바르지 않습니다.');
+            throw new Error('올바르지 않은 데이터 형식');
         }
         
         console.log('로드된 질문:', questions);
-        console.log('질문 타입:', params.type);
-        console.log('질문 개수:', params.count);
         
-        // 질문 로드 완료 후 첫 번째 질문 표시
+        // 질문 로딩 모달 숨기기
+        hideQuestionLoadingModal();
+        
+        // 첫 번째 질문 표시
         showNextQuestion();
+        
     } catch (error) {
         console.error('질문 로드 오류:', error);
-        alert('질문을 불러오는 중 오류가 발생했습니다.');
+        // 질문 로딩 모달 숨기기
+        hideQuestionLoadingModal();
+        alert('질문을 로드하는 중 오류가 발생했습니다.');
     }
 }
 
@@ -145,6 +291,9 @@ async function submitAnswer() {
         inputElement.disabled = true;
     }
 
+    // 분석 모달 표시
+    showAnalysisModal();
+
     try {
         // API 호출
         const response = await fetch(`${API_BASE_URL}/analyze`, {
@@ -160,6 +309,9 @@ async function submitAnswer() {
         }
 
         const data = await response.json();
+        
+        // 분석 모달 숨기기
+        hideAnalysisModal();
         
         const questionElement = document.getElementById('question_text');
         results.push({
@@ -182,6 +334,8 @@ async function submitAnswer() {
         
     } catch (error) {
         console.error('Error:', error);
+        // 분석 모달 숨기기
+        hideAnalysisModal();
         alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');
         
         // 오류 시 버튼 다시 활성화
@@ -300,9 +454,14 @@ function showFinalResult() {
 document.addEventListener('DOMContentLoaded', function() {
     const params = getParamsFromURL();
     maxCount = params.count;
-    currentCount = 0;
+    
+    // AI 설정 질문일 때만 로딩 모달 표시
+    if (params.type === 'aiSettings') {
+        showQuestionLoadingModal();
+    }
     
     console.log('질문 개수:', maxCount);
+    console.log('질문 타입:', params.type);
     
     // 제출 버튼 클릭 이벤트
     const submitButton = document.getElementById('user_input_button');
@@ -319,7 +478,40 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // 마이크 버튼 클릭 이벤트
+    const micButton = document.getElementById('mic_button');
+    if (micButton) {
+        micButton.addEventListener('click', showMicModal);
+    }
+
+    // 마이크 모달 내부 버튼 이벤트
+    const startRecordingButton = document.getElementById('start_recording');
+    if (startRecordingButton) {
+        startRecordingButton.addEventListener('click', startRecording);
+    }
+
+    const stopRecordingButton = document.getElementById('stop_recording');
+    if (stopRecordingButton) {
+        stopRecordingButton.addEventListener('click', stopRecording);
+    }
+
+    // 마이크 모달 백그라운드 클릭 시 닫기
+    const micModal = document.getElementById('mic_modal');
+    if (micModal) {
+        micModal.addEventListener('click', function(event) {
+            if (event.target === micModal) {
+                hideMicModal();
+            }
+        });
+    }
     
-    // 질문 로드
-    loadQuestions();
+    // AI 설정일 때는 지연 후 로드, 밈은 바로 로드
+    if (params.type === 'aiSettings') {
+        setTimeout(() => {
+            loadQuestions();
+        }, 100);
+    } else {
+        loadQuestions();
+    }
 });
