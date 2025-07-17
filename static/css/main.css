@@ -277,3 +277,83 @@ text-shadow:
         transform: translateY(0);
     }
 }
+
+/* --- 모바일 반응형 스타일 추가 --- */
+@media (max-width: 768px) {
+    header, main {
+        min-width: 0;
+        width: 100vw;
+    }
+    main {
+        padding: 0 8px;
+        background-size: cover;
+    }
+    #main_title {
+        margin-top: 40px;
+        gap: 10px;
+    }
+    #main_logo {
+        width: 70vw;
+        max-width: 320px;
+        height: 100px;
+        margin-left: 0;
+        background-size: contain;
+    }
+    #main_content {
+        flex-direction: column;
+        gap: 24px;
+        padding: 20px 8px 0 8px;
+        min-height: 60px;
+        font-size: 18px;
+    }
+    .main_content_box {
+        height: auto;
+        gap: 24px;
+    }
+    #main_content p {
+        font-size: 18px;
+    }
+    .main_content_box > p {
+        font-size: 18px;
+    }
+    #question_count, #question_type {
+        gap: 24px;
+    }
+    #question_count .question_count_box span, #question_type .question_type_box span {
+        font-size: 16px;
+    }
+    #start_button {
+        width: 100px;
+        height: 40px;
+        font-size: 16px;
+        margin-top: 10px;
+    }
+    .modal-content {
+        max-width: 95vw;
+        padding: 0;
+    }
+    .modal-header, .modal-body, .modal-footer {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    #main_logo {
+        width: 90vw;
+        max-width: 220px;
+        height: 60px;
+    }
+    #main_content {
+        font-size: 14px;
+        padding: 10px 2px 0 2px;
+    }
+    #main_content p, .main_content_box > p {
+        font-size: 14px;
+    }
+    #start_button {
+        width: 80px;
+        height: 32px;
+        font-size: 13px;
+    }
+}

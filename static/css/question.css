@@ -442,3 +442,93 @@ h3{
     background-color: rgba(255, 255, 255, 0.3);
     color: white;
 }
+
+/* --- 모바일 반응형 스타일 추가 --- */
+@media (max-width: 768px) {
+    main, #question_content {
+        min-width: 0;
+        width: 100vw;
+    }
+    #question_content {
+        height: auto;
+        padding: 16px 4vw;
+    }
+    #question_content p {
+        font-size: 16px;
+        max-width: 95vw;
+    }
+    #character {
+        width: 50vw;
+        max-width: 180px;
+        height: 200px;
+        margin-top: 24px;
+    }
+    #user_input {
+        min-width: 0;
+        width: 95vw;
+        padding: 12px;
+        font-size: 14px;
+    }
+    #user_name {
+        font-size: 16px;
+    }
+    #user_input_text {
+        font-size: 14px;
+    }
+    #questions_buttons {
+        margin-left: 0;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    #mic_button {
+        width: 36px;
+        height: 36px;
+    }
+    #user_input_button {
+        width: 80px;
+        height: 36px;
+        font-size: 14px;
+    }
+    .modal_content {
+        min-width: 0;
+        max-width: 95vw;
+        padding: 10px;
+    }
+    .mic_modal_content {
+        min-width: 0;
+        max-width: 95vw;
+        padding: 0;
+    }
+    .modal_header, .modal_body, .modal_footer {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+    #recognized_result {
+        font-size: 13px;
+        padding: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    #character {
+        width: 80vw;
+        max-width: 120px;
+        height: 120px;
+    }
+    #question_content p, #user_name, #user_input_text {
+        font-size: 12px;
+    }
+    #user_input_button {
+        width: 60px;
+        height: 28px;
+        font-size: 11px;
+    }
+    #mic_button {
+        width: 28px;
+        height: 28px;
+    }
+    #recognized_result {
+        font-size: 11px;
+        padding: 4px;
+    }
+}

@@ -124,3 +124,17 @@
 [STT] 10. 응답 반환
 [STT] 14. 인식된 텍스트:  마이크 테스트 중입니다. 마이크 테스트.
 [STT] 11. 임시 파일 삭제 완료: C:\Users\201\AppData\Local\Temp\tmp5xr__4rz.webm
+[STT] 1. /stt 요청 도착
+[STT] 2. 업로드 파일명: recorded_audio.webm
+[STT] 4. 파일 확장자: .webm
+[STT] 6. 임시 파일 저장 시작
+[STT] 7. 임시 파일 저장 완료: C:\Users\201\AppData\Local\Temp\tmpgn__w8k_.webm
+[STT] 8. Whisper 변환 시작
+[STT] 9. Whisper 변환 완료:  마이크 테스트 2, 마이크 테스트 2
+[STT] 10. 응답 반환
+[STT] 14. 인식된 텍스트:  마이크 테스트 2, 마이크 테스트 2
+[STT] 11. 임시 파일 삭제 완료: C:\Users\201\AppData\Local\Temp\tmpgn__w8k_.webm
+[DEBUG] analyze_text 함수 진입!
+[DEBUG] /analyze 요청 도착, AI_MODEL: None
+[DEBUG] Fallback(키워드 분석) 분기 진입
+[분석 로직: fallback]
