@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MBTI T/F 분석 결과</title>
     <style>
+        @font-face {
+            font-family: 'NanumDiary';
+            src: url('나눔손글씨 규리의 일기.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'JejuHallasan';
+            src: url('JejuHallasan.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -44,7 +56,7 @@
         }
 
         #finalGraph {
-            background: rgba(255, 255, 255, 0.9);
+            background: url('images/textbar2.png') center / cover no-repeat;
             padding: 2rem;
             border-radius: 15px;
             margin: 2rem auto;
@@ -57,17 +69,31 @@
             flex-direction: column;
         }
 
+        #finalGraph * {
+            font-family: 'NanumDiary', sans-serif !important;
+        }
+
+        #finalOneLiner * {
+            font-family: 'JejuHallasan', sans-serif !important;
+        }
+
         .section-container {
             display: none;
             margin-top: 1rem;
             animation: scaleUp 0.5s ease forwards;
-            background: url('/images/textbar2.png') center/cover no-repeat;
             background-size: cover;
             padding: 1rem;
             border-radius: 15px;
             color: white;
             width: 100%;
             box-sizing: border-box;
+            min-width: 900px;
+            max-width: 900px;
+            min-height: 340px;
+            max-height: 340px;
+            margin-left: auto;
+            margin-right: auto;
+            overflow-y: visible;
         }
         .section-container.active {
             display: block;
@@ -81,8 +107,8 @@
         }
 
         .icon-button {
-            width: 45px;
-            height: 45px;
+            width: 160px;
+            height: 80px;
             border: none;
             border-radius: 12px;
             color: white;
@@ -92,19 +118,47 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: none;
+            background-color: transparent;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            margin-right: 10%;
         }
-
+        .icon-button img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: filter 0.2s;
+        }
         .icon-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
-            background: rgba(0, 0, 0, 0.8);
+            color: #FFC107;
+            transform: scale(1.12);
         }
-
+        .icon-button:hover img.effective {
+            content: url('images/Effective_yellow.png');
+        }
+        .icon-button:hover img.yougood {
+            content: url('images/Yougood_yellow.png');
+        }
+        .icon-button:hover img.improve {
+            content: url('images/Improve_yellow.png');
+        }
         .icon-button.active {
-            animation: buttonActive 0.3s ease forwards;
-            background: rgba(0, 0, 0, 0.9);
-            transform: scale(1.1);
+            /* 선택된 버튼은 배경색 변화 없음 */
+            color: #fff;
+            box-shadow: none;
+            transform: none;
+        }
+        /* 활성화된 탭(버튼)의 이미지는 항상 노란색으로 */
+        .icon-button.active img.effective {
+            content: url('images/Effective_yellow.png');
+        }
+        .icon-button.active img.yougood {
+            content: url('images/Yougood_yellow.png');
+        }
+        .icon-button.active img.improve {
+            content: url('images/Improve_yellow.png');
         }
 
         .icon-buttons {
@@ -113,6 +167,7 @@
             margin-bottom: 0.5rem;
             justify-content: flex-end;
             width: 100%;
+            margin-left: 6rem;
         }
 
         @keyframes scaleUp {
@@ -154,6 +209,90 @@
             background-color: #45a049;
             transform: scale(1.05);
         }
+        .custom-tabs {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            align-items: flex-end;
+            margin-bottom: 1.5rem;
+            background: transparent;
+            border: none;
+        }
+        .custom-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            padding: 0 1.5rem;
+            transition: color 0.2s;
+        }
+        .custom-tab .tab-title {
+            font-size: 1.5em;
+            font-style: 'JejuHallasan', sans-serif;
+            color: #fff;
+            margin-bottom: 0.2em;
+        }
+        .custom-tab.active .tab-title {
+            color: #FFC107;
+        }
+        .custom-tab .tab-underline {
+            width: 100px;
+            height: 18px;
+            margin-top: -8px;
+        }
+        .custom-tab .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-top: -10px;
+        }
+        .custom-tab:not(.active) .tab-title {
+            color: #fff;
+            opacity: 0.7;
+        }
+        .strengths-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem 0.8rem;
+            justify-items: center;
+            align-items: center;
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+        .strengths-list > div {
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 2em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            text-align: center;
+        }
+        .growth-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem 0.8rem;
+            justify-items: center;
+            align-items: center;
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+        .growth-list > div {
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 2em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -192,10 +331,9 @@
             
             // 기본 정보 표시
             document.getElementById('finalOneLiner').innerHTML = `
-                <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; color: white; margin-bottom: 2rem;">
-                    <h2 style="margin: 0; font-size: 1.8em; margin-bottom: 1rem;">🎯 최종 분석 결과</h2>
-                    <p style="font-size: 2.2em; font-weight: 900; margin-bottom: 0.5rem; color: #FFE066; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); animation: pulse 2s infinite; line-height: 1.2;">${getFinalOneLiner(averageScore)}</p>
-                    <p style="font-size: 1.2em; opacity: 0.9;">전체 평균: ${averageScore.toFixed(1)}점</p>
+                <div style="text-align: center; padding: 2rem; background: url('images/White_board.png') center / 100% 100% no-repeat; border-radius: 20px; color: white; margin-bottom: 2rem; width: 1200px; max-width: 1200px; margin-left: auto; margin-right: auto;">
+                    <p style="font-size: 2.2em; font-weight: 900; margin-bottom: 0.5rem; color: #000000; font-family: 'JejuHallasan', sans-serif; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); animation: pulse 2s infinite; line-height: 1.2; white-space: pre-line;">${getFinalOneLiner(averageScore)}</p>
+                    
                 </div>
             `;
 
@@ -205,17 +343,23 @@
                 
                 // 결과 그래프와 분석 표시
                 document.getElementById('finalGraph').innerHTML = `
-                    <div style="display: flex; flex-direction: column; width: 100%; gap: 0; padding: 0; margin: 0;">
                         <div style="display: flex; flex-direction: column; width: 100%;">
                             <div class="icon-buttons">
-                                <button class="icon-button active" onclick="showSection('communicationSection', this)">💬</button>
-                                <button class="icon-button" onclick="showSection('strengthsSection', this)">⭐</button>
-                                <button class="icon-button" onclick="showSection('growthSection', this)">🌱</button>
+                                <button class="icon-button active" onclick="showSection('communicationSection', this)"><img src="images/Effective_white.png" class="effective" alt="효과적인 소통법"/></button>
+                                <button class="icon-button" onclick="showSection('strengthsSection', this)"><img src="images/Yougood_white.png" class="yougood" alt="당신의 강점"/></button>
+                                <button class="icon-button" onclick="showSection('growthSection', this)"><img src="images/Improve_white.png" class="improve" alt="성장 포인트"/></button>
                             </div>
                             <div style="display: flex; align-items: flex-start; gap: 2rem; width: 100%;">
                                 <div style="display: flex; flex-direction: column; gap: 2rem; align-items: flex-start;">
-                                    <div style="position: relative; width: 220px; height: 220px; flex-shrink: 0;">
+                                    <div style="position: relative; width: 220px; height: 220px; flex-shrink: 0; margin-left: 40px;">
+
+
+<p style="font-size: 2.0em; opacity: 1.5; font-family: 'Noto Sans KR', sans-serif;">전체 평균: ${averageScore.toFixed(1)}점</p>
+
+                                        
                                         <svg width="220" height="220" style="transform: rotate(-90deg);">
+                                            <circle cx="110" cy="110" r="96" fill="none" stroke="#fff" stroke-width="8"/>
+                                            <circle cx="110" cy="110" r="74" fill="none" stroke="#fff" stroke-width="8"/>
                                             <circle cx="110" cy="110" r="85" fill="none" stroke="#f0f0f0" stroke-width="22"/>
                                             <circle cx="110" cy="110" r="85" fill="none" stroke="#ff6b6b" stroke-width="22" 
                                                     stroke-dasharray="${(100-averageScore) * 5.34} 534" stroke-linecap="round"/>
@@ -223,36 +367,37 @@
                                                     stroke-dasharray="${averageScore * 5.34} 534" 
                                                     stroke-dashoffset="${-(100-averageScore) * 5.34}" stroke-linecap="round"/>
                                         </svg>
-                                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-                                            <div style="font-size: 2.2em; font-weight: bold; color: #333; margin-bottom: 0.2rem;">${averageScore.toFixed(1)}</div>
-                                            <div style="font-size: 1em; color: #666;">점</div>
+                                        <div style="position: absolute; top: 64%; left: 50%; transform: translate(-50%, -50%); text-align: center; font-family: 'Noto Sans KR', sans-serif;">
+                                            <div style="font-size: 2.8em; font-weight: bold; color: #333; margin-bottom: 0.2rem; text-shadow: 2px 2px 8px #fff, 0 0 4px #fff;">${averageScore.toFixed(1)}</div>
                                         </div>
                                     </div>
 
                                     <div style="display: flex; gap: 1rem; width: 100%; max-width: 400px;">
-                                        <div style="text-align: center; padding: 0.8rem; background: linear-gradient(135deg, #ff6b6b, #ff8e53); border-radius: 15px; color: white; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3); flex: 1; max-width: 150px;">
-                                            <div style="font-size: 1.1em; font-weight: 600; margin-bottom: 0.2rem;">Thinking</div>
-                                            <div style="font-size: 0.8em; opacity: 0.9;">🧠 논리적 사고</div>
+
+                                        <div style="text-align: center; padding: 0.8rem; background: linear-gradient(135deg, #4ecdc4, #44a08d); border-radius: 15px; color: white; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); flex: 0.7; max-width: 85px; margin-left: 3.5rem; font-family: 'Noto Sans KR', sans-serif;">
+                                            <div style="font-size: 2.0em; font-weight: 600; margin-bottom: 0.2rem;">F성향</div>
+                                            
+                                        </div>
+                                        <div style="text-align: center; padding: 0.8rem; background: linear-gradient(135deg, #ff6b6b, #ff8e53); border-radius: 15px; color: white; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3); flex: 0.7; max-width: 85px; font-family: 'Noto Sans KR', sans-serif;">
+                                            <div style="font-size: 2.0em; font-weight: 600; margin-bottom: 0.2rem;">T성향</div>
+                                            
                                         </div>
                                         
-                                        <div style="text-align: center; padding: 0.8rem; background: linear-gradient(135deg, #4ecdc4, #44a08d); border-radius: 15px; color: white; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); flex: 1; max-width: 150px;">
-                                            <div style="font-size: 1.1em; font-weight: 600; margin-bottom: 0.2rem;">Feeling</div>
-                                            <div style="font-size: 0.8em; opacity: 0.9;">💝 감정적 공감</div>
-                                        </div>
+                                        
                                     </div>
                                 </div>
 
                                 <div style="flex: 1; display: flex; flex-direction: column;">
                                     <div id="communicationSection" class="section-container active">
-                                        <div style="position: relative; z-index: 1; width: 100%; padding: 2rem; color: #222; text-align: center; display: flex; flex-direction: column; gap: 1rem; align-items: center; justify-content: center;">
-                                            <h3 class="section-title" style="color: #222; text-shadow: 0 2px 8px rgba(255,255,255,0.7); background: rgba(255,255,255,0.85); border-radius: 12px; padding: 0.5rem 1.5rem; display: inline-block; margin-bottom: 1rem;">💬 F 성향 상대와의 효과적인 소통법</h3>
-                                            <div style="white-space: pre-line; line-height: 1.8; font-weight: 500; margin-bottom: 0.5rem; background: rgba(255,255,255,0.92); color: #222; border-radius: 12px; padding: 0.1em 0.5em; box-shadow: 0 2px 8px rgba(0,0,0,0.07); display: inline-block;">
+                                        <div style="position: relative; z-index: 1; width: 100%; padding: 1rem; color: #222; text-align: center; display: flex; flex-direction: column; gap: 0.8rem; align-items: center; justify-content: flex-start;">
+                                            <h3 class="section-title">💬 F 성향 상대와의 효과적인 소통법</h3>
+                                            <div style="color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 500; font-size: 1.7em; white-space: normal; overflow: hidden; text-overflow: ellipsis; word-break: break-all; overflow-wrap: break-word; max-width: 100%;">
                                                 ${finalAnalysis.core_strategy}
                                             </div>
-                                            <div style="white-space: pre-line; line-height: 1.8; font-weight: 500; margin-bottom: 0.5rem; background: rgba(255,255,255,0.92); color: #222; border-radius: 12px; padding: 0.1em 0.5em; box-shadow: 0 2px 8px rgba(0,0,0,0.07); display: inline-block;">
+                                            <div style="color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 500; font-size: 1.7em; white-space: normal; overflow: hidden; text-overflow: ellipsis; word-break: break-all; overflow-wrap: break-word; max-width: 100%;">
                                                 ${finalAnalysis.conversation_style}
                                             </div>
-                                            <div style="white-space: pre-line; line-height: 1.8; font-weight: 500; background: rgba(255,255,255,0.92); color: #222; border-radius: 12px; padding: 0.1em 0.5em; box-shadow: 0 2px 8px rgba(0,0,0,0.07); display: inline-block;">
+                                            <div style="color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 500; font-size: 1.7em; white-space: normal; overflow: hidden; text-overflow: ellipsis; word-break: break-all; overflow-wrap: break-word; max-width: 100%;">
                                                 ${finalAnalysis.enhancement_point}
                                             </div>
                                         </div>
@@ -260,9 +405,9 @@
 
                                     <div id="strengthsSection" class="section-container">
                                         <h3 class="section-title">⭐ 당신의 강점</h3>
-                                        <div style="display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center;">
+                                        <div class="strengths-list">
                                             ${finalAnalysis.strengths.map(strength => `
-                                                <div style="background: #ff9800; color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 500; font-size: 0.95em;">
+                                                <div>
                                                     #${strength.replace(/[.]/g, '')}
                                                 </div>
                                             `).join('')}
@@ -271,9 +416,9 @@
 
                                     <div id="growthSection" class="section-container">
                                         <h3 class="section-title">🌱 성장 포인트</h3>
-                                        <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                                        <div class="growth-list">
                                             ${finalAnalysis.growth_areas.map(area => `
-                                                <div style="background: #17a2b8; color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 500; font-size: 0.95em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                <div>
                                                     #${area.replace(/[.]/g, '')}
                                                 </div>
                                             `).join('')}
@@ -284,118 +429,66 @@
                         </div>
                     </div>
                 `;
-
             } catch (error) {
-                console.error('Error fetching final analysis:', error);
+                console.error("Error fetching final analysis:", error);
                 document.getElementById('finalGraph').innerHTML = `
-                    <div style="background: #f8d7da; padding: 2rem; border-radius: 15px; border-left: 5px solid #dc3545; color: #721c24;">
-                        <h3 style="margin-top: 0;">⚠️ 분석 오류</h3>
-                        <p>종합 분석 중 오류가 발생했습니다. 기본 분석 결과를 표시합니다.</p>
-                        <div style="margin-top: 1rem;">${getFinalReview(averageScore)}</div>
+                    <div style="text-align: center; padding: 2rem; background: url('images/White_board.png') center / cover no-repeat; border-radius: 20px; color: white; margin-bottom: 2rem;">
+                        <p style="font-size: 2.2em; font-weight: 900; margin-bottom: 0.5rem; color: #000000; font-style: JejuHallasan.ttf; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); animation: pulse 2s infinite; line-height: 1.2;">오류가 발생했습니다.</p>
+                        <p style="font-size: 1.5em; color: #666;">다시 시도해주세요.</p>
                     </div>
                 `;
             }
         }
 
         // 섹션 표시 함수
-        function showSection(sectionId, btn) {
+        function showSection(sectionId, button) {
             const sections = document.querySelectorAll('.section-container');
             sections.forEach(section => {
                 section.classList.remove('active');
             });
+            document.getElementById(sectionId).classList.add('active');
 
             const buttons = document.querySelectorAll('.icon-button');
-            buttons.forEach(button => {
-                button.classList.remove('active');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
             });
-
-            if (btn) btn.classList.add('active');
-
-            const selectedSection = document.getElementById(sectionId);
-            if (selectedSection) {
-                selectedSection.classList.add('active');
-                selectedSection.style.animation = 'none';
-                selectedSection.offsetHeight;
-                selectedSection.style.animation = null;
-            }
+            button.classList.add('active');
         }
 
-        // 로컬 분석 생성 함수
-        function generateLocalAnalysis(score) {
-            let analysis = {
-                core_strategy: "",
-                conversation_style: "",
-                enhancement_point: "",
-                strengths: [],
-                growth_areas: []
+        // 최종 한 줄 명언 생성 함수
+        function getFinalOneLiner(averageScore) {
+            let text = "";
+            if (averageScore >= 70) {
+                text = "당신은 논리적이고 객관적인 사고를 가지고 있어요. 모든 것을 논리적으로 분석하고 해결해요.";
+            } else if (averageScore >= 40) {
+                text = "당신은 감정적이고 주관적인 사고를 가지고 있어요. 감정에 따라 판단하고 행동해요.";
+            } else {
+                text = "당신은 중립적이고 철학적인 사고를 가지고 있어요. 모든 것을 중립적으로 바라보고 판단해요.";
+            }
+            // 문장 끝(마침표, 물음표, 느낌표) 뒤에 줄바꿈 추가
+            return text.replace(/([.?!])\s*/g, "$1\n");
+        }
+
+        // 로컬 분석 함수 (실제 API 호출 대신 사용)
+        function generateLocalAnalysis(averageScore) {
+            const strengths = [
+                "논리적인 사고", "객관적인 판단", "명확한 목표 설정", "빠른 의사결정", "문제 해결 능력",
+                "창의적인 아이디어", "비판적 사고", "모험적인 접근", "독립적인 사고", "빠른 학습 능력"
+            ];
+            const growthAreas = [
+                "논리적인 사고 발달", "객관적인 판단 강화", "명확한 목표 설정 및 실행", "빠른 의사결정 능력 향상",
+                "문제 해결 능력 강화", "창의적인 아이디어 발굴", "비판적 사고 강화", "모험적인 접근 및 도전",
+                "독립적인 사고 확립", "빠른 학습 능력 향상"
+            ];
+
+            return {
+                core_strategy: "F 성향 상대와의 효과적인 소통을 위해서는 논리적인 사고와 객관적인 판단을 바탕으로 상대의 의견을 수용하고, 감정적인 반응보다는 논리적인 근거를 제시하는 것이 중요해요.",
+                conversation_style: "F 성향 상대와 소통할 때는 감정적인 반응보다는 논리적인 근거와 함께 상대의 감정을 이해하고 공감하는 태도를 보이는 것이 좋아요.",
+                enhancement_point: "F 성향 상대와 소통할 때는 논리적인 근거와 함께 상대의 감정을 이해하고 공감하는 태도를 보이는 것이 좋아요.",
+                strengths: strengths,
+                growth_areas: growthAreas
             };
-
-            if (score < 40) {
-                analysis.core_strategy = "논리적인 접근을 선호하시는군요. F 성향의 사람들과 대화할 때는 그들의 감정을 인정하고 공감하는 시간을 가져보세요.";
-                analysis.conversation_style = "객관적 사실과 함께 상대방의 감정도 고려하여 이야기를 나누면 더 효과적일 거예요.";
-                analysis.enhancement_point = "감정적 표현을 조금 더 활용해보세요. '이해해요'라는 말 한마디가 큰 차이를 만들 수 있답니다.";
-                analysis.strengths = ["명확한 의사소통", "문제해결 능력", "객관적 판단", "효율적인 결정"];
-                analysis.growth_areas = ["감정 표현하기", "공감 능력 키우기", "관계 중심적 사고"];
-            } else if (score < 60) {
-                analysis.core_strategy = "균형 잡힌 성향을 가지고 계시네요. 상황에 따라 논리와 감정을 적절히 조절해보세요.";
-                analysis.conversation_style = "때로는 논리적으로, 때로는 감정적으로 접근하는 유연한 소통이 가능하실 거예요.";
-                analysis.enhancement_point = "각 상황에 맞는 접근 방식을 선택하면서 더욱 효과적인 소통을 이끌어보세요.";
-                analysis.strengths = ["상황 적응력", "균형잡힌 사고", "유연한 소통", "포용력"];
-                analysis.growth_areas = ["상황 파악력 향상", "소통 스타일 다양화"];
-            } else {
-                analysis.core_strategy = "감정적 공감 능력이 뛰어나시네요. 논리적 상황에서도 이 강점을 잘 활용해보세요.";
-                analysis.conversation_style = "따뜻한 마음으로 상대방을 이해하고 공감하는 소통을 잘 하실 수 있어요.";
-                analysis.enhancement_point = "때로는 객관적 사실에 기반한 의견 제시도 필요할 수 있다는 점을 기억해주세요.";
-                analysis.strengths = ["뛰어난 공감능력", "감정 이해력", "따뜻한 소통", "관계 형성력"];
-                analysis.growth_areas = ["객관성 유지", "논리적 분석력", "감정과 이성의 균형"];
-            }
-
-            return analysis;
-        }
-
-        // 최종 한 줄 평가 생성
-        function getFinalOneLiner(score) {
-            if (score < 20) return "🤖 냉철한 논리 머신! 감정? 그게 뭔가요?";
-            if (score <= 40) return "📊 팩트 폭격기! 데이터가 곧 진리죠?";
-            if (score >= 41 && score <= 59) return "⚖️ 논리와 감정의 줄타기 달인! 양다리 고수네요~";
-            if (score < 80) return "💝 감정 공감 레이더! 눈물 한 방울도 놓치지 않죠?";
-            return "😭 완전 감성팩토리! 드라마 보다가 티슈 몇 박스 써요?";
-        }
-
-        // 최종 리뷰 생성
-        function getFinalReview(score) {
-            if (score < 20) {
-                return `
-                    <p>당신은 매우 논리적이고 객관적인 판단을 선호합니다.</p>
-                    <p>감정보다는 사실과 논리에 기반하여 결정을 내리는 경향이 강합니다.</p>
-                    <p>문제 해결 능력이 뛰어나며, 효율적인 의사결정을 잘 하실 것 같네요.</p>
-                `;
-            } else if (score < 40) {
-                return `
-                    <p>논리적 사고를 바탕으로 하되, 감정적 요소도 고려하시는 편입니다.</p>
-                    <p>객관적 판단을 중시하지만, 상황에 따라 유연한 대처도 가능하십니다.</p>
-                    <p>균형 잡힌 사고방식을 가지고 있으나, T 성향이 조금 더 강합니다.</p>
-                `;
-            } else if (score < 60) {
-                return `
-                    <p>논리와 감정 사이에서 훌륭한 균형을 이루고 계십니다.</p>
-                    <p>상황에 따라 객관적 판단과 감정적 공감을 적절히 사용하시는 것 같네요.</p>
-                    <p>다양한 관점에서 문제를 바라볼 수 있는 능력이 있습니다.</p>
-                `;
-            } else if (score < 80) {
-                return `
-                    <p>감정적 공감 능력이 뛰어나며, 다른 사람의 감정을 잘 이해하십니다.</p>
-                    <p>논리적 판단도 가능하지만, 감정적 요소를 더 중요하게 고려하시는 편입니다.</p>
-                    <p>인간관계에서 뛰어난 능력을 발휘하실 것 같네요.</p>
-                `;
-            } else {
-                return `
-                    <p>매우 뛰어난 감정적 공감 능력을 가지고 계십니다.</p>
-                    <p>다른 사람의 감정을 깊이 이해하고 배려하는 성향이 매우 강합니다.</p>
-                    <p>인간관계에서 탁월한 능력을 보여주실 것 같네요.</p>
-                `;
-            }
         }
     </script>
 </body>
-</html> 
+</html>
