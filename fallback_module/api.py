@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Response, UploadFile, File
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -14,8 +14,10 @@ from typing import Dict, List, Optional
 import google.generativeai as genai
 from dotenv import load_dotenv
 import random
-import tempfile
-from stt_module import transcribe_audio_file  # 추가
+from fallback_utils import (
+    generate_fallback_questions, analyze_tf_tendency,
+    get_f_friendly_alternatives, get_t_strong_ment, get_t_mild_ment
+)
 
 # 환경변수 로드
 load_dotenv()
@@ -75,7 +77,8 @@ class FinalAnalysisResponse(BaseModel):
     communication_strategy: str
     strengths: List[str]
     growth_areas: List[str]
-    keyword_analysis: Dict[str, Dict[str, int]]  # 카테고리별 키워드 사용 횟수
+    keyword_analysis: Optional[Dict[str, Dict[str, int]]] = None  # 카테고리별 키워드 사용 횟수 (fallback)
+    gemini_keyword_text: Optional[str] = None  # Gemini 자연어 키워드 분석 결과
 
 class QuestionGenerationRequest(BaseModel):
     count: Optional[int] = 5  # 생성할 질문 개수
@@ -186,6 +189,7 @@ def analyze_tf_tendency(text: str) -> float:
     """
     text = text.lower()
     import re
+    final_score = 50  # 모든 경로에서 final_score가 정의되도록 기본값 할당
 
     # 사고형(T) 강한 무심/단정/객관적 표현 패턴 (확실한 사고형)
     t_strong_patterns = [
@@ -199,7 +203,8 @@ def analyze_tf_tendency(text: str) -> float:
 
     # 싸가지 없는(공감 없는 퉁명/무심) 패턴 (살짝 T)
     t_rude_patterns = [
-        r"몰라", r"딱히", r"별 생각 없어", r"신경 안 써", r"관심 없어", r"그냥 그래", r"글쎄", r"음[.\.\,\!\?…]*$", r"별로야"
+        r"몰라", r"딱히", r"별 생각 없어", r"신경 안 써", r"관심 없어", r"그냥 그래", r"글쎄", r"음[.\.,!\?…]*$", r"별로야",
+        r"별다른 이유는 없어", r"딱히 이유 없어", r"그냥 배고파서", r"그냥 그렇다"
     ]
     t_rude_count = sum(len(re.findall(pattern, text)) for pattern in t_rude_patterns)
     if t_rude_count > 0:
@@ -207,14 +212,23 @@ def analyze_tf_tendency(text: str) -> float:
         score = max(35, 45 - (t_rude_count - 1) * 3)
         return float(score)
 
-    # 1. 키워드(핵심/약한) 및 가중치
+    # '그냥'이 문장 앞에 오거나 '~이유는 없어'가 포함되면 T 점수 추가 감점
+    if re.search(r'^그냥', text) or re.search(r'이유는 없어', text):
+        final_score = max(final_score - 10, 15)
+
+    # '결과가 더 중요', '결과가 우선', '결과가 핵심', '성과가 더 중요', '성과가 우선', '성과가 핵심' 등 패턴이 있으면 T 점수 추가 감점
+    if re.search(r'(결과|성과)(가)?( 더)? (중요|우선|핵심)', text):
+        final_score = max(final_score - 12, 15)
+
+    # T 키워드 가중치 강화
     t_keywords_strong = [
         '논리', '분석', '판단', '효율', '객관', '사실', '증거', '합리', '이성', '체계',
         '정확', '명확', '일관', '데이터', '통계', '측정',
         '맞다', '틀렸다', '정답', '확실', '명백', '분명', '확인',
         '검토', '평가', '기준', '조건', '해결', '개선',
         '최적', '효과', '결정', '선택', '우선순위', '중요도',
-        '불가능', '문제', '해답', '답', '반드시', '무조건', '체크', '실용적', '계산'
+        '불가능', '문제', '해답', '답', '반드시', '무조건', '체크', '실용적', '계산',
+        '결과', '성과', '해결', '판단', '우선', '핵심'  # 추가 강화
     ]
     t_keywords_weak = [
         '계획', '전략', '목표', '성과', '방법', '해야', '해야지', '하자', '됐다', '안 돼', '안 됨',
@@ -370,6 +384,76 @@ def analyze_tf_tendency(text: str) -> float:
         bonus = min(strong_f * 3, 8)
         final_score = min(final_score + bonus, 80)
     
+    # "감정보다" 등 감정을 상대적으로 낮게 평가하는 패턴이 있으면 T 점수 가산(즉, final_score에서 감점)
+    if re.search(r"감정보다|감정보다는|감정보다 논리|감정보다 사실|감정보다 더|감정보다 중요|감정보다 우선", text):
+        final_score = max(final_score - 15, 15)
+    
+    # T 키워드(논리, 사실, 객관, 판단 등)가 감정(F) 키워드와 함께 등장하면 T 우위 문맥으로 인식하여 추가 감점
+    t_context_keywords = ["논리", "사실", "객관", "판단", "효율", "정확", "분석"]
+    if ("감정" in text or "기분" in text or "마음" in text) and any(k in text for k in t_context_keywords):
+        final_score = max(final_score - 10, 15)
+    
+    # --- 맥락 기반 패턴 추가 ---
+    context_patterns = [
+        (r"함께|협력|같이|팀|서로 도와|공동", 10),  # F 성향 가중치
+        (r"스스로|내가 책임|자율적으로|내 몫|내가 알아서", -10),  # T 성향 가중치
+        (r"부탁|설득|요구|권유|제안", 5),  # F 성향(부드러운 요청)
+        (r"공감|위로|이해|같이 느껴|마음 헤아려", 10),  # F 성향 가중치
+        (r"직접|해결|실용|즉시|바로 행동", -10),  # T 성향 가중치
+        (r"분명히|확실히|반드시|단호하게|명확히", -7),  # T 성향 가중치
+        (r"양해|부탁드려요|조심스럽게|완곡하게|미안하지만", 7),  # F 성향 가중치
+    ]
+    for pattern, weight in context_patterns:
+        if re.search(pattern, text):
+            final_score += weight
+    
+    # --- 공격적/단호/강한 어조 패턴 추가 (약한 T 성향으로만 보정) ---
+    aggressive_patterns = [
+        r"멍청", r"바보", r"쓸데없", r"신경 끄", r"꺼져", r"닥쳐", r"그만해", r"짜증나", r"귀찮", r"상관없어", r"알아서 해", r"내 알 바 아냐", r"그게 나랑 무슨 상관이야", r"네 마음대로 해", r"내가 뭘", r"그건 네 문제야", r"그건 중요하지 않아", r"어쩌라고", r"왜 그래", r"뭐가 문제야", r"그냥 해", r"시끄러워", r"말도 안 돼", r"말하지 마", r"필요 없어", r"쓸모없어", r"그만둬", r"됐어", r"됐거든", r"됐으니까", r"그만하자", r"그만둬라", r"그만해라", r"하지 마라", r"하지 마", r"하지 말라고", r"하지 말라니까", r"하지 말지", r"하지 말았어야지", r"하지 말았으면", r"하지 말았으면 좋았을 텐데"
+    ]
+    aggressive_count = sum(len(re.findall(pattern, text)) for pattern in aggressive_patterns)
+    if aggressive_count > 0:
+        # 공격적/단호/강한 어조가 감지되면 T 성향이지만, 약한 T(35~45점)로만 제한
+        score = max(35, 45 - (aggressive_count - 1) * 3)
+        final_score = min(final_score, score)
+    
+    # --- 감정/논리 키워드 혼재 시 처리 ---
+    if t_count > 0 and f_count > 0:
+        if t_count > f_count:
+            # T 키워드가 더 많으면 T 성향으로 7점 추가 감점
+            final_score = max(final_score - 7, 15)
+        elif f_count > t_count:
+            # F 키워드가 더 많으면 F 성향으로 7점 추가 가산
+            final_score = min(final_score + 7, 85)
+        else:
+            # T/F 키워드 수가 1:1로 동일하면 T 성향으로 10점 추가 감점
+            final_score = max(final_score - 10, 15)
+    
+    # --- 복합 접속사/전환어(혼재 완화) ---
+    conjunction_patterns = [r"하지만", r"그래도", r"일단", r"더라도", r"~해도", r"그럼에도", r"비록", r"반면에", r"그러나", r"그러면서도"]
+    if any(re.search(pattern, text) for pattern in conjunction_patterns):
+        # 혼재 접속사가 있으면 점수를 중립(50) 쪽으로 7점 보정
+        if final_score < 50:
+            final_score = min(final_score + 7, 50)
+        elif final_score > 50:
+            final_score = max(final_score - 7, 50)
+
+    # --- 단호/명령/무심 패턴의 강도 완화 ---
+    firm_end_patterns = [r"해야지", r"한다[\.]?", r"한다고", r"한다면", r"된다[\.]?", r"안 된다[\.]?", r"한다니까", r"한다네", r"한다지", r"한다는"]
+    if any(re.search(pattern, text) for pattern in firm_end_patterns):
+        # 감정 키워드가 일부라도 있으면 T 가중치 완화(점수 +5)
+        if f_count > 0:
+            final_score = min(final_score + 5, 85)
+
+    # --- 반복/강조/예외적 상황 패턴 ---
+    repeat_emph_patterns = [r"계속", r"반복", r"매번", r"항상", r"절대", r"꼭", r"다시는", r"언제나", r"늘", r"매일", r"자주"]
+    if any(re.search(pattern, text) for pattern in repeat_emph_patterns):
+        # 반복/강조/예외적 상황은 점수를 중립(50) 쪽으로 5점 보정
+        if final_score < 50:
+            final_score = min(final_score + 5, 50)
+        elif final_score > 50:
+            final_score = max(final_score - 5, 50)
+    
     return min(max(final_score, 15), 85)
 
 def generate_f_friendly_response(question: str, answer: str, score: float) -> str:
@@ -523,7 +607,8 @@ def generate_final_analysis(results: List[Dict]) -> FinalAnalysisResponse:
             communication_strategy="",
             strengths=[],
             growth_areas=[],
-            keyword_analysis={}
+            keyword_analysis={},
+            gemini_keyword_text=None
         )
     
     # 전체 평균 점수 계산
@@ -749,7 +834,8 @@ F 성향 상대와의 효과적인 소통법:
         communication_strategy=communication_strategy,
         strengths=strengths,
         growth_areas=growth_areas,
-        keyword_analysis=keyword_analysis
+        keyword_analysis=keyword_analysis,
+        gemini_keyword_text=None
     )
 
 def log_debug(msg):
@@ -888,9 +974,66 @@ async def analyze_text(request: TextRequest):
 @app.post("/final_analyze")
 async def final_analyze(request: FinalAnalysisRequest):
     try:
-        final_result = generate_final_analysis(request.results)
-        return final_result
+        if AI_MODEL:
+            log_debug("[DEBUG] Gemini 최종 분석 분기 진입 (final_analyze)")
+            # Gemini 프롬프트: 항목별로 명확하게 요청
+            prompt = f"""
+아래는 사용자가 MBTI T/F 분석 테스트에서 답변한 질문과 답변 리스트입니다. 각 답변은 T/F 점수(0~100, 0=T, 100=F)로 이미 분석되어 있습니다.
+이 데이터를 바탕으로 아래 항목별로 한글로 요약해줘. 각 항목은 반드시 [항목명]: 으로 시작해줘.
+
+1. [overall_tendency]: 전체 성향 요약 (한 줄, 예: '강한 T(사고형) 성향', 'T-F 균형', '강한 F(감정형) 성향' 등)
+2. [personality_analysis]: 성격 분석 (전체 답변의 경향, 일관성, 특징 등)
+3. [communication_strategy]: F 성향 상대와의 소통 전략 (구체적이고 실용적인 팁, 대화 방식, 주의점 등)
+4. [strengths]: 강점 (3~5개 키워드, 해시태그 형태, 쉼표로 구분)
+5. [growth_areas]: 성장 포인트 (3~5개, 구체적 실천방식, 쉼표로 구분)
+6. [keyword_analysis]: 키워드별 사용 분석 (논리적 사고, 분석적 접근, 감정적 공감, 관계 중심 등 카테고리별로 답변에서 많이 사용된 단어나 특징을 자연어로 요약)
+
+질문/답변/점수 리스트:
+"""
+            for idx, r in enumerate(request.results, 1):
+                prompt += f"{idx}. 질문: {r.get('question','')}\n답변: {r.get('answer','')}\n점수: {r.get('score','')}\n"
+            prompt += """
+위 내용을 바탕으로 각 항목별로 [항목명]: 으로 시작해서 한글로 요약해줘.
+"""
+            log_debug(f"[DEBUG] Gemini 최종 분석 프롬프트(항목별):\n{prompt}")
+            import re
+            try:
+                response = await asyncio.to_thread(AI_MODEL.generate_content, prompt)
+                log_debug(f"[DEBUG] Gemini 최종 분석 응답 원본(항목별):\n{response}")
+                result = response.text.strip()
+                # 항목별 파싱
+                def extract(tag):
+                    m = re.search(rf"\[{tag}\]:?\s*(.*?)(?=\n\[|$)", result, re.DOTALL)
+                    return m.group(1).strip() if m else ""
+                overall_tendency = extract("overall_tendency")
+                personality_analysis = extract("personality_analysis")
+                communication_strategy = extract("communication_strategy")
+                strengths_raw = extract("strengths")
+                growth_areas_raw = extract("growth_areas")
+                keyword_analysis_raw = extract("keyword_analysis")
+                # strengths, growth_areas 쉼표로 분리
+                strengths = [s.strip().lstrip('#') for s in strengths_raw.split(',') if s.strip()]
+                growth_areas = [g.strip() for g in growth_areas_raw.split(',') if g.strip()]
+                # Gemini 자연어 키워드 분석 결과는 별도 필드에 저장
+                return FinalAnalysisResponse(
+                    overall_tendency=overall_tendency,
+                    personality_analysis=personality_analysis,
+                    communication_strategy=communication_strategy,
+                    strengths=strengths,
+                    growth_areas=growth_areas,
+                    keyword_analysis=None,
+                    gemini_keyword_text=keyword_analysis_raw
+                )
+            except Exception as e:
+                log_debug(f"[Gemini 최종 분석 예외 발생, fallback으로 자체 분석 수행]: {e}")
+                final_result = generate_final_analysis(request.results)
+                return final_result
+        else:
+            log_debug("[DEBUG] Gemini AI 비활성화, fallback(기존 분석) 분기")
+            final_result = generate_final_analysis(request.results)
+            return final_result
     except Exception as e:
+        log_debug(f"[final_analyze 최상위 예외]: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/generate_questions")
@@ -956,84 +1099,14 @@ async def get_questions(use_ai: str = "false", count: int = 5, difficulty: str =
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# 루트 경로 리디렉션
-from fastapi.responses import FileResponse
+# Static 파일 마운트 (API 엔드포인트 뒤에 위치)
+app.mount("/", StaticFiles(directory=".", html=True), name="static")
 
-@app.get("/")
-async def read_root():
-    return FileResponse("static/html/main.html")
-
-@app.get("/question")
-async def read_question():
-    return FileResponse("static/html/question.html")
-
-@app.post("/stt")
-async def speech_to_text(audio_file: UploadFile = File(...)):
-    """
-    Speech to text endpoint that accepts audio file uploads
-    """
-    try:
-        with open("debug.log", "a", encoding="utf-8") as f:
-            f.write("[STT] 1. /stt 요청 도착\n")
-            f.write(f"[STT] 2. 업로드 파일명: {audio_file.filename}\n")
-        if not audio_file:
-            with open("debug.log", "a", encoding="utf-8") as f:
-                f.write("[STT] 3. audio_file 없음\n")
-            raise HTTPException(status_code=400, detail="No audio file provided")
-        allowed_extensions = ['.wav', '.mp3', '.ogg', '.m4a', '.webm']
-        filename = audio_file.filename or ""
-        file_ext = os.path.splitext(filename)[1].lower()
-        with open("debug.log", "a", encoding="utf-8") as f:
-            f.write(f"[STT] 4. 파일 확장자: {file_ext}\n")
-        if file_ext not in allowed_extensions:
-            with open("debug.log", "a", encoding="utf-8") as f:
-                f.write(f"[STT] 5. 지원하지 않는 파일 포맷: {file_ext}\n")
-            raise HTTPException(
-                status_code=400,
-                detail=f"Unsupported file format. Allowed formats: {', '.join(allowed_extensions)}"
-            )
-        temp_audio_path = None
-        try:
-            with open("debug.log", "a", encoding="utf-8") as f:
-                f.write("[STT] 6. 임시 파일 저장 시작\n")
-            with tempfile.NamedTemporaryFile(delete=False, suffix=file_ext) as temp_audio:
-                temp_audio_path = temp_audio.name
-                content = await audio_file.read()
-                temp_audio.write(content)
-                temp_audio.flush()
-                os.fsync(temp_audio.fileno())
-            with open("debug.log", "a", encoding="utf-8") as f:
-                f.write(f"[STT] 7. 임시 파일 저장 완료: {temp_audio_path}\n")
-                f.write("[STT] 8. Whisper 변환 시작\n")
-            # Whisper로 음성 인식 (stt_module 사용)
-            result_text = transcribe_audio_file(temp_audio_path)
-            with open("debug.log", "a", encoding="utf-8") as f:
-                f.write(f"[STT] 9. Whisper 변환 완료: {result_text}\n")
-                f.write("[STT] 10. 응답 반환\n")
-                f.write(f"[STT] 14. 인식된 텍스트: {result_text}\n")
-            return {"text": result_text}
-        finally:
-            if temp_audio_path and os.path.exists(temp_audio_path):
-                try:
-                    os.unlink(temp_audio_path)
-                    with open("debug.log", "a", encoding="utf-8") as f:
-                        f.write(f"[STT] 11. 임시 파일 삭제 완료: {temp_audio_path}\n")
-                except Exception as e:
-                    with open("debug.log", "a", encoding="utf-8") as f:
-                        f.write(f"[STT] 12. 임시 파일 삭제 실패: {e}\n")
-    except Exception as e:
-        with open("debug.log", "a", encoding="utf-8") as f:
-            f.write(f"[STT] 13. 예외 발생: {e}\n")
-        print(f"STT Error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-# --- 모든 라우터 선언 이후에만 app.mount 선언 ---
-app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/answer", StaticFiles(directory="answer"), name="answer")
-app.mount("/images", StaticFiles(directory="images"), name="images")
-app.mount("/", StaticFiles(directory=".", html=True), name="root")
-
-# get_t_strong_ment, get_t_mild_ment 함수 복원
+@app.post("/reset_log")
+async def reset_log():
+    with open("debug.log", "w", encoding="utf-8") as f:
+        f.write("[DEBUG] 로그가 초기화되었습니다!\n")
+    return Response(content="로그 초기화 완료", media_type="text/plain")
 
 def get_t_strong_ment():
     return [
@@ -1064,7 +1137,7 @@ def get_t_mild_ment():
     ]
 
 # auto_keyword_weights.json 자동 반영
-AUTO_WEIGHT_FILE = os.path.join('json', 'auto_keyword_weights.json')
+AUTO_WEIGHT_FILE = 'auto_keyword_weights.json'
 auto_weights = {}
 if os.path.exists(AUTO_WEIGHT_FILE):
     with open(AUTO_WEIGHT_FILE, 'r', encoding='utf-8') as f:
@@ -1073,15 +1146,36 @@ if os.path.exists(AUTO_WEIGHT_FILE):
 def get_keyword_weight(keyword, base_weight=2):
     return auto_weights.get(keyword, base_weight)
 
-# judgement_data.json 샘플 로드 (필요시 활용)
-JUDGEMENT_DATA_FILE = os.path.join('json', 'judgement_data.json')
-judgement_data = []
-if os.path.exists(JUDGEMENT_DATA_FILE):
-    with open(JUDGEMENT_DATA_FILE, 'r', encoding='utf-8') as f:
-        judgement_data = json.load(f)
+# 기존 analyze_tf_tendency 함수 내에서 키워드별 가중치 적용 예시
+# 예시: t_keywords_strong, f_keywords_strong 키워드 가중치 계산 시 get_keyword_weight 사용
+
+@app.post("/detailed_analyze")
+async def detailed_analyze_post(request: DetailedAnalysisRequest):
+    """
+    답변에 대한 상세 분석을 수행하고 결과를 반환합니다.
+    """
+    try:
+        # 답변 분석
+        score = analyze_tf_tendency(request.answer)
+        
+        # 상세 분석 및 제안사항 생성
+        detailed = generate_f_friendly_response(request.question, request.answer, score)
+        
+        # 대체 답변 예시 생성
+        alternatives = get_f_friendly_alternatives()
+        alternative = random.choice(alternatives) if alternatives else None
+        
+        return {
+            "score": score,
+            "detailed_analysis": detailed,
+            "alternative_response": alternative
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn
+    # 서버 시작 시 debug.log 파일 초기화
     with open("debug.log", "w", encoding="utf-8") as f:
         f.write("[DEBUG] 서버가 실행되었습니다!\n")
         f.write(f"[DEBUG] 실행 중인 파일: {os.path.abspath(__file__)}\n")
