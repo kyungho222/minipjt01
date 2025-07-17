@@ -55,6 +55,12 @@ function showMicModal() {
     if (modal) {
         modal.style.display = 'flex';
         resetMicModal();
+        // 질문 텍스트를 모달에 노출
+        const q = document.getElementById('question_text');
+        const micQ = document.getElementById('mic_modal_question');
+        if (micQ) {
+            micQ.textContent = q && q.textContent ? q.textContent : '질문이 없습니다.';
+        }
     }
 }
 

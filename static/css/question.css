@@ -443,6 +443,20 @@ h3{
     color: white;
 }
 
+.mic_guide_title {
+    font-family: 'HeirofBold', sans-serif;
+    font-size: 20px;
+    color: #fde4b0;
+    background: rgba(250,145,43,0.15);
+    border-radius: 8px;
+    padding: 12px 0;
+    margin-bottom: 18px;
+    margin-top: 0;
+    text-align: center;
+    letter-spacing: -0.5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
 /* --- 모바일 반응형 스타일 추가 --- */
 @media (max-width: 768px) {
     main, #question_content {
@@ -506,6 +520,11 @@ h3{
     #recognized_result {
         font-size: 13px;
         padding: 8px;
+    }
+    .mic_guide_title {
+        font-size: 15px;
+        padding: 8px 0;
+        margin-bottom: 12px;
     }
 }
 
