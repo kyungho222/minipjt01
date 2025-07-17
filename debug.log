@@ -1,2 +1,222 @@
 [DEBUG] 서버가 실행되었습니다!
 [DEBUG] 실행 중인 파일: C:\Users\RANG\Desktop\mini\api.py
+[DEBUG] analyze_text 함수 진입!
+[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
+    model_name='models/gemini-1.5-pro-latest',
+    generation_config={},
+    safety_settings={},
+    tools=None,
+    system_instruction=None,
+    cached_content=None
+)
+[DEBUG] Gemini AI 분석 분기 진입
+[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "generativelanguage.googleapis.com"
+}
+, locale: "en-US"
+message: "API key expired. Please renew the API key."
+]
+[분석 로직: fallback]
+[DEBUG] analyze_text 함수 진입!
+[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
+    model_name='models/gemini-1.5-pro-latest',
+    generation_config={},
+    safety_settings={},
+    tools=None,
+    system_instruction=None,
+    cached_content=None
+)
+[DEBUG] Gemini AI 분석 분기 진입
+[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "generativelanguage.googleapis.com"
+}
+, locale: "en-US"
+message: "API key expired. Please renew the API key."
+]
+[분석 로직: fallback]
+[DEBUG] analyze_text 함수 진입!
+[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
+    model_name='models/gemini-1.5-pro-latest',
+    generation_config={},
+    safety_settings={},
+    tools=None,
+    system_instruction=None,
+    cached_content=None
+)
+[DEBUG] Gemini AI 분석 분기 진입
+[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "generativelanguage.googleapis.com"
+}
+, locale: "en-US"
+message: "API key expired. Please renew the API key."
+]
+[분석 로직: fallback]
+[DEBUG] analyze_text 함수 진입!
+[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
+    model_name='models/gemini-1.5-pro-latest',
+    generation_config={},
+    safety_settings={},
+    tools=None,
+    system_instruction=None,
+    cached_content=None
+)
+[DEBUG] Gemini AI 분석 분기 진입
+[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "generativelanguage.googleapis.com"
+}
+, locale: "en-US"
+message: "API key expired. Please renew the API key."
+]
+[분석 로직: fallback]
+[DEBUG] analyze_text 함수 진입!
+[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
+    model_name='models/gemini-1.5-pro-latest',
+    generation_config={},
+    safety_settings={},
+    tools=None,
+    system_instruction=None,
+    cached_content=None
+)
+[DEBUG] Gemini AI 분석 분기 진입
+[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "generativelanguage.googleapis.com"
+}
+, locale: "en-US"
+message: "API key expired. Please renew the API key."
+]
+[분석 로직: fallback]
+[DEBUG] analyze_text 함수 진입!
+[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
+    model_name='models/gemini-1.5-pro-latest',
+    generation_config={},
+    safety_settings={},
+    tools=None,
+    system_instruction=None,
+    cached_content=None
+)
+[DEBUG] Gemini AI 분석 분기 진입
+[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "generativelanguage.googleapis.com"
+}
+, locale: "en-US"
+message: "API key expired. Please renew the API key."
+]
+[분석 로직: fallback]
+[DEBUG] analyze_text 함수 진입!
+[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
+    model_name='models/gemini-1.5-pro-latest',
+    generation_config={},
+    safety_settings={},
+    tools=None,
+    system_instruction=None,
+    cached_content=None
+)
+[DEBUG] Gemini AI 분석 분기 진입
+[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "generativelanguage.googleapis.com"
+}
+, locale: "en-US"
+message: "API key expired. Please renew the API key."
+]
+[분석 로직: fallback]
+[DEBUG] analyze_text 함수 진입!
+[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
+    model_name='models/gemini-1.5-pro-latest',
+    generation_config={},
+    safety_settings={},
+    tools=None,
+    system_instruction=None,
+    cached_content=None
+)
+[DEBUG] Gemini AI 분석 분기 진입
+[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "generativelanguage.googleapis.com"
+}
+, locale: "en-US"
+message: "API key expired. Please renew the API key."
+]
+[분석 로직: fallback]
+[DEBUG] analyze_text 함수 진입!
+[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
+    model_name='models/gemini-1.5-pro-latest',
+    generation_config={},
+    safety_settings={},
+    tools=None,
+    system_instruction=None,
+    cached_content=None
+)
+[DEBUG] Gemini AI 분석 분기 진입
+[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "generativelanguage.googleapis.com"
+}
+, locale: "en-US"
+message: "API key expired. Please renew the API key."
+]
+[분석 로직: fallback]
+[DEBUG] analyze_text 함수 진입!
+[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
+    model_name='models/gemini-1.5-pro-latest',
+    generation_config={},
+    safety_settings={},
+    tools=None,
+    system_instruction=None,
+    cached_content=None
+)
+[DEBUG] Gemini AI 분석 분기 진입
+[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "generativelanguage.googleapis.com"
+}
+, locale: "en-US"
+message: "API key expired. Please renew the API key."
+]
+[분석 로직: fallback]
+[DEBUG] analyze_text 함수 진입!
+[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
+    model_name='models/gemini-1.5-pro-latest',
+    generation_config={},
+    safety_settings={},
+    tools=None,
+    system_instruction=None,
+    cached_content=None
+)
+[DEBUG] Gemini AI 분석 분기 진입
+[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "generativelanguage.googleapis.com"
+}
+, locale: "en-US"
+message: "API key expired. Please renew the API key."
+]
+[분석 로직: fallback]
