@@ -49,6 +49,29 @@
     </div>
     <input type="button" value="시작" id="start_button">
     
+    <!-- 리뷰 모달 샘플 버튼 -->
+    <button id="sample_review_btn" style="margin-top:30px;">리뷰 모달 샘플</button>
+
+    <!-- 리뷰 모달 샘플 -->
+    <div id="sample_review_modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="display:inline-block;">답변 리뷰</h3>
+                <button id="sample_review_tts" aria-label="TTS" style="background:none; border:none; cursor:pointer; font-size:24px; margin-left:10px; vertical-align:middle; color:rgb(250,145,43);">🔊</button>
+                <span class="close" onclick="document.getElementById('sample_review_modal').style.display='none'">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p><b>질문:</b> 왜 이렇게 말수가 줄었어?</p>
+                <p><b>답변:</b> 요즘 생각이 많아져서 그래</p>
+                <p><b>상세:</b> 너의 대답은 극도의 T야</p>
+                <p><b>실천팁:</b> 감정을 솔직하게 표현해보는 연습을 해보세요.</p>
+                <p><b>대안답변:</b> 가끔은 내 생각을 말로 표현하는 게 어려워.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-button" onclick="document.getElementById('sample_review_modal').style.display='none'">닫기</button>
+            </div>
+        </div>
+    </div>
     <!-- 알림 모달 -->
     <div id="alert_modal" class="modal" style="display: none;">
         <div class="modal-content">

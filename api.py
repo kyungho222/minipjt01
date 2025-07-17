@@ -15,12 +15,23 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 import random
 import tempfile
-from stt_module import transcribe_audio_file  # 추가
+from modules.stt_module import transcribe_audio_file  # 수정: modules.stt_module로 경로 변경
+from modules.tts_module import text_to_speech
+from fastapi.responses import FileResponse
 
 # 환경변수 로드
 load_dotenv()
 
 app = FastAPI()
+
+# 라우터 목록 강제 출력 (BaseRoute 타입도 예외처리)
+print("=== FastAPI 라우터 목록 ===")
+for route in app.routes:
+    try:
+        print(f"{route.path} [{','.join(route.methods)}]")
+    except Exception:
+        print(str(route))
+print("=========================")
 
 # CORS 설정
 app.add_middleware(
@@ -1080,9 +1091,42 @@ if os.path.exists(JUDGEMENT_DATA_FILE):
     with open(JUDGEMENT_DATA_FILE, 'r', encoding='utf-8') as f:
         judgement_data = json.load(f)
 
+class TTSRequest(BaseModel):
+    text: str
+    lang: str = 'ko'
+
+@app.post("/tts")
+async def tts_api(request: TTSRequest):
+    try:
+        with open("debug.log", "a", encoding="utf-8") as f:
+            f.write("[TTS] 1. /tts 요청 도착\n")
+            f.write(f"[TTS] 2. 입력 텍스트: {request.text}\n")
+        mp3_path = text_to_speech(request.text, lang=request.lang)
+        with open("debug.log", "a", encoding="utf-8") as f:
+            f.write(f"[TTS] 3. mp3 파일 생성: {mp3_path}\n")
+            f.write("[TTS] 4. 응답 반환\n")
+        return FileResponse(mp3_path, media_type='audio/mpeg', filename='tts.mp3')
+    except Exception as e:
+        with open("debug.log", "a", encoding="utf-8") as f:
+            f.write(f"[TTS] 5. 예외 발생: {e}\n")
+        raise HTTPException(status_code=500, detail=f"TTS 변환 오류: {e}")
+
 if __name__ == "__main__":
+    print("=== FastAPI 라우터 목록(최종)===")
+    for route in app.routes:
+        try:
+            print(f"{getattr(route, 'path', str(route))} [{','.join(getattr(route, 'methods', []))}]")
+        except Exception:
+            print(str(route))
+    print("=========================")
     import uvicorn
     with open("debug.log", "w", encoding="utf-8") as f:
         f.write("[DEBUG] 서버가 실행되었습니다!\n")
         f.write(f"[DEBUG] 실행 중인 파일: {os.path.abspath(__file__)}\n")
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+# --- 반드시 맨 마지막에만 위치 ---
+app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/answer", StaticFiles(directory="answer"), name="answer")
+app.mount("/images", StaticFiles(directory="images"), name="images")
+app.mount("/", StaticFiles(directory=".", html=True), name="root")

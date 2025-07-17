@@ -1,6 +1,2 @@
 [DEBUG] 서버가 실행되었습니다!
 [DEBUG] 실행 중인 파일: C:\Users\201\Documents\GitHub\minipjt01\minipjt01\api.py
-[DEBUG] analyze_text 함수 진입!
-[DEBUG] /analyze 요청 도착, AI_MODEL: None
-[DEBUG] Fallback(키워드 분석) 분기 진입
-[분석 로직: fallback]

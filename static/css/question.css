@@ -551,3 +551,7 @@ h3{
         padding: 4px;
     }
 }
+
+#user_input:hover {
+    cursor: url('/images/chalk.png'), pointer;
+}

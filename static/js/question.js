@@ -535,4 +535,29 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         loadQuestions();
     }
+
+    // 삭제 버튼 이벤트
+    const clearBtn = document.getElementById('clear_recognized_text');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+            const recognizedResult = document.getElementById('recognized_result');
+            if (recognizedResult) recognizedResult.textContent = '';
+        });
+    }
+
+    // user_input div에 마우스 오버 시 분필 커서 적용
+    const userInputDiv = document.getElementById('user_input');
+    if (userInputDiv) {
+        userInputDiv.addEventListener('mouseenter', function() {
+            userInputDiv.style.cursor = "url('/images/chalk.png'), pointer";
+        });
+        userInputDiv.addEventListener('mouseleave', function() {
+            userInputDiv.style.cursor = "";
+        });
+    }
 });
+
+// 새로고침 시 메인(main) 페이지로 이동
+if (window.performance && window.performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+    window.location.replace('/static/html/main.html');
+}

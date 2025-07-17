@@ -129,6 +129,39 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    var sampleBtn = document.getElementById('sample_review_btn');
+    var sampleModal = document.getElementById('sample_review_modal');
+    if (sampleBtn && sampleModal) {
+        sampleBtn.addEventListener('click', function() {
+            sampleModal.style.display = 'flex';
+        });
+    }
+
+    // 리뷰모달 샘플 스피커(TTS) 버튼 기능
+    var ttsBtn = document.getElementById('sample_review_tts');
+    if (ttsBtn) {
+        ttsBtn.addEventListener('click', async function() {
+            // 실천팁/대안답변 텍스트 추출 (정적 샘플)
+            var tip = '감정을 솔직하게 표현해보는 연습을 해보세요.';
+            var alt = '가끔은 내 생각을 말로 표현하는 게 어려워.';
+            var ttsText = '실천팁: ' + tip + ' 대안답변: ' + alt;
+            try {
+                const response = await fetch('/tts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: ttsText, lang: 'ko' })
+                });
+                if (!response.ok) throw new Error('TTS 변환 실패');
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                const audio = new Audio(url);
+                audio.play();
+            } catch (e) {
+                alert('음성 변환에 실패했습니다.');
+            }
+        });
+    }
 });
 
 // 질문 페이지 표시
