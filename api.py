@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Response
+from fastapi import FastAPI, HTTPException, Response, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -14,6 +14,8 @@ from typing import Dict, List, Optional
 import google.generativeai as genai
 from dotenv import load_dotenv
 import random
+import tempfile
+from stt_module import transcribe_audio_file  # 추가
 
 # 환경변수 로드
 load_dotenv()
@@ -965,14 +967,73 @@ async def read_root():
 async def read_question():
     return FileResponse("static/html/question.html")
 
-# Static 파일 마운트 (API 엔드포인트 뒤에 위치)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+@app.post("/stt")
+async def speech_to_text(audio_file: UploadFile = File(...)):
+    """
+    Speech to text endpoint that accepts audio file uploads
+    """
+    try:
+        with open("debug.log", "a", encoding="utf-8") as f:
+            f.write("[STT] 1. /stt 요청 도착\n")
+            f.write(f"[STT] 2. 업로드 파일명: {audio_file.filename}\n")
+        if not audio_file:
+            with open("debug.log", "a", encoding="utf-8") as f:
+                f.write("[STT] 3. audio_file 없음\n")
+            raise HTTPException(status_code=400, detail="No audio file provided")
+        allowed_extensions = ['.wav', '.mp3', '.ogg', '.m4a', '.webm']
+        filename = audio_file.filename or ""
+        file_ext = os.path.splitext(filename)[1].lower()
+        with open("debug.log", "a", encoding="utf-8") as f:
+            f.write(f"[STT] 4. 파일 확장자: {file_ext}\n")
+        if file_ext not in allowed_extensions:
+            with open("debug.log", "a", encoding="utf-8") as f:
+                f.write(f"[STT] 5. 지원하지 않는 파일 포맷: {file_ext}\n")
+            raise HTTPException(
+                status_code=400,
+                detail=f"Unsupported file format. Allowed formats: {', '.join(allowed_extensions)}"
+            )
+        temp_audio_path = None
+        try:
+            with open("debug.log", "a", encoding="utf-8") as f:
+                f.write("[STT] 6. 임시 파일 저장 시작\n")
+            with tempfile.NamedTemporaryFile(delete=False, suffix=file_ext) as temp_audio:
+                temp_audio_path = temp_audio.name
+                content = await audio_file.read()
+                temp_audio.write(content)
+                temp_audio.flush()
+                os.fsync(temp_audio.fileno())
+            with open("debug.log", "a", encoding="utf-8") as f:
+                f.write(f"[STT] 7. 임시 파일 저장 완료: {temp_audio_path}\n")
+                f.write("[STT] 8. Whisper 변환 시작\n")
+            # Whisper로 음성 인식 (stt_module 사용)
+            result_text = transcribe_audio_file(temp_audio_path)
+            with open("debug.log", "a", encoding="utf-8") as f:
+                f.write(f"[STT] 9. Whisper 변환 완료: {result_text}\n")
+                f.write("[STT] 10. 응답 반환\n")
+                f.write(f"[STT] 14. 인식된 텍스트: {result_text}\n")
+            return {"text": result_text}
+        finally:
+            if temp_audio_path and os.path.exists(temp_audio_path):
+                try:
+                    os.unlink(temp_audio_path)
+                    with open("debug.log", "a", encoding="utf-8") as f:
+                        f.write(f"[STT] 11. 임시 파일 삭제 완료: {temp_audio_path}\n")
+                except Exception as e:
+                    with open("debug.log", "a", encoding="utf-8") as f:
+                        f.write(f"[STT] 12. 임시 파일 삭제 실패: {e}\n")
+    except Exception as e:
+        with open("debug.log", "a", encoding="utf-8") as f:
+            f.write(f"[STT] 13. 예외 발생: {e}\n")
+        print(f"STT Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/reset_log")
-async def reset_log():
-    with open("debug.log", "w", encoding="utf-8") as f:
-        f.write("[DEBUG] 로그가 초기화되었습니다!\n")
-    return Response(content="로그 초기화 완료", media_type="text/plain")
+# --- 모든 라우터 선언 이후에만 app.mount 선언 ---
+app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/answer", StaticFiles(directory="answer"), name="answer")
+app.mount("/images", StaticFiles(directory="images"), name="images")
+app.mount("/", StaticFiles(directory=".", html=True), name="root")
+
+# get_t_strong_ment, get_t_mild_ment 함수 복원
 
 def get_t_strong_ment():
     return [
@@ -1002,21 +1063,8 @@ def get_t_mild_ment():
         "팩트부터 정리해라? 내 마음은 누가 정리해줘?"
     ]
 
-# answer 폴더를 정적 파일로 서비스
-app.mount("/answer", StaticFiles(directory="answer"), name="answer")
-
-# images 폴더를 정적 파일로 서비스
-app.mount("/images", StaticFiles(directory="images"), name="images")
-
-# answer, images, static 폴더를 정적 파일로 서비스
-app.mount("/answer", StaticFiles(directory="answer"), name="answer")
-app.mount("/images", StaticFiles(directory="images"), name="images")
-app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/", StaticFiles(directory=".", html=True), name="root")
-
 if __name__ == "__main__":
     import uvicorn
-    # 서버 시작 시 debug.log 파일 초기화
     with open("debug.log", "w", encoding="utf-8") as f:
         f.write("[DEBUG] 서버가 실행되었습니다!\n")
         f.write(f"[DEBUG] 실행 중인 파일: {os.path.abspath(__file__)}\n")

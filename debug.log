@@ -1,222 +1,126 @@
 [DEBUG] 서버가 실행되었습니다!
-[DEBUG] 실행 중인 파일: C:\Users\RANG\Desktop\mini\api.py
+[DEBUG] 실행 중인 파일: C:\Users\201\Documents\GitHub\minipjt01\minipjt01\api.py
+[STT] 1. /stt 요청 도착
+[STT] 2. 업로드 파일명: recorded_audio.webm
+[STT] 4. 파일 확장자: .webm
+[STT] 6. 임시 파일 저장 시작
+[STT] 7. 임시 파일 저장 완료: C:\Users\201\AppData\Local\Temp\tmpjurncq9k.webm
+[STT] 8. Whisper 변환 시작
+[STT] 9. Whisper 변환 완료:  마이크 테스트 1 2 3
+[STT] 10. 응답 반환
+[STT] 14. 인식된 텍스트:  마이크 테스트 1 2 3
+[STT] 11. 임시 파일 삭제 완료: C:\Users\201\AppData\Local\Temp\tmpjurncq9k.webm
 [DEBUG] analyze_text 함수 진입!
-[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
-    model_name='models/gemini-1.5-pro-latest',
-    generation_config={},
-    safety_settings={},
-    tools=None,
-    system_instruction=None,
-    cached_content=None
-)
-[DEBUG] Gemini AI 분석 분기 진입
-[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
-domain: "googleapis.com"
-metadata {
-  key: "service"
-  value: "generativelanguage.googleapis.com"
-}
-, locale: "en-US"
-message: "API key expired. Please renew the API key."
-]
+[DEBUG] /analyze 요청 도착, AI_MODEL: None
+[DEBUG] Fallback(키워드 분석) 분기 진입
 [분석 로직: fallback]
-[DEBUG] analyze_text 함수 진입!
-[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
-    model_name='models/gemini-1.5-pro-latest',
-    generation_config={},
-    safety_settings={},
-    tools=None,
-    system_instruction=None,
-    cached_content=None
-)
-[DEBUG] Gemini AI 분석 분기 진입
-[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
-domain: "googleapis.com"
-metadata {
-  key: "service"
-  value: "generativelanguage.googleapis.com"
-}
-, locale: "en-US"
-message: "API key expired. Please renew the API key."
-]
-[분석 로직: fallback]
-[DEBUG] analyze_text 함수 진입!
-[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
-    model_name='models/gemini-1.5-pro-latest',
-    generation_config={},
-    safety_settings={},
-    tools=None,
-    system_instruction=None,
-    cached_content=None
-)
-[DEBUG] Gemini AI 분석 분기 진입
-[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
-domain: "googleapis.com"
-metadata {
-  key: "service"
-  value: "generativelanguage.googleapis.com"
-}
-, locale: "en-US"
-message: "API key expired. Please renew the API key."
-]
-[분석 로직: fallback]
-[DEBUG] analyze_text 함수 진입!
-[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
-    model_name='models/gemini-1.5-pro-latest',
-    generation_config={},
-    safety_settings={},
-    tools=None,
-    system_instruction=None,
-    cached_content=None
-)
-[DEBUG] Gemini AI 분석 분기 진입
-[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
-domain: "googleapis.com"
-metadata {
-  key: "service"
-  value: "generativelanguage.googleapis.com"
-}
-, locale: "en-US"
-message: "API key expired. Please renew the API key."
-]
-[분석 로직: fallback]
-[DEBUG] analyze_text 함수 진입!
-[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
-    model_name='models/gemini-1.5-pro-latest',
-    generation_config={},
-    safety_settings={},
-    tools=None,
-    system_instruction=None,
-    cached_content=None
-)
-[DEBUG] Gemini AI 분석 분기 진입
-[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
-domain: "googleapis.com"
-metadata {
-  key: "service"
-  value: "generativelanguage.googleapis.com"
-}
-, locale: "en-US"
-message: "API key expired. Please renew the API key."
-]
-[분석 로직: fallback]
-[DEBUG] analyze_text 함수 진입!
-[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
-    model_name='models/gemini-1.5-pro-latest',
-    generation_config={},
-    safety_settings={},
-    tools=None,
-    system_instruction=None,
-    cached_content=None
-)
-[DEBUG] Gemini AI 분석 분기 진입
-[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
-domain: "googleapis.com"
-metadata {
-  key: "service"
-  value: "generativelanguage.googleapis.com"
-}
-, locale: "en-US"
-message: "API key expired. Please renew the API key."
-]
-[분석 로직: fallback]
-[DEBUG] analyze_text 함수 진입!
-[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
-    model_name='models/gemini-1.5-pro-latest',
-    generation_config={},
-    safety_settings={},
-    tools=None,
-    system_instruction=None,
-    cached_content=None
-)
-[DEBUG] Gemini AI 분석 분기 진입
-[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
-domain: "googleapis.com"
-metadata {
-  key: "service"
-  value: "generativelanguage.googleapis.com"
-}
-, locale: "en-US"
-message: "API key expired. Please renew the API key."
-]
-[분석 로직: fallback]
-[DEBUG] analyze_text 함수 진입!
-[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
-    model_name='models/gemini-1.5-pro-latest',
-    generation_config={},
-    safety_settings={},
-    tools=None,
-    system_instruction=None,
-    cached_content=None
-)
-[DEBUG] Gemini AI 분석 분기 진입
-[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
-domain: "googleapis.com"
-metadata {
-  key: "service"
-  value: "generativelanguage.googleapis.com"
-}
-, locale: "en-US"
-message: "API key expired. Please renew the API key."
-]
-[분석 로직: fallback]
-[DEBUG] analyze_text 함수 진입!
-[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
-    model_name='models/gemini-1.5-pro-latest',
-    generation_config={},
-    safety_settings={},
-    tools=None,
-    system_instruction=None,
-    cached_content=None
-)
-[DEBUG] Gemini AI 분석 분기 진입
-[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
-domain: "googleapis.com"
-metadata {
-  key: "service"
-  value: "generativelanguage.googleapis.com"
-}
-, locale: "en-US"
-message: "API key expired. Please renew the API key."
-]
-[분석 로직: fallback]
-[DEBUG] analyze_text 함수 진입!
-[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
-    model_name='models/gemini-1.5-pro-latest',
-    generation_config={},
-    safety_settings={},
-    tools=None,
-    system_instruction=None,
-    cached_content=None
-)
-[DEBUG] Gemini AI 분석 분기 진입
-[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
-domain: "googleapis.com"
-metadata {
-  key: "service"
-  value: "generativelanguage.googleapis.com"
-}
-, locale: "en-US"
-message: "API key expired. Please renew the API key."
-]
-[분석 로직: fallback]
-[DEBUG] analyze_text 함수 진입!
-[DEBUG] /analyze 요청 도착, AI_MODEL: genai.GenerativeModel(
-    model_name='models/gemini-1.5-pro-latest',
-    generation_config={},
-    safety_settings={},
-    tools=None,
-    system_instruction=None,
-    cached_content=None
-)
-[DEBUG] Gemini AI 분석 분기 진입
-[Gemini AI 예외 발생, fallback으로 자체 분석 수행]: 400 API key expired. Please renew the API key. [reason: "API_KEY_INVALID"
-domain: "googleapis.com"
-metadata {
-  key: "service"
-  value: "generativelanguage.googleapis.com"
-}
-, locale: "en-US"
-message: "API key expired. Please renew the API key."
-]
-[분석 로직: fallback]
+[STT] 1. /stt 요청 도착
+[STT] 2. 업로드 파일명: recorded_audio.webm
+[STT] 4. 파일 확장자: .webm
+[STT] 6. 임시 파일 저장 시작
+[STT] 7. 임시 파일 저장 완료: C:\Users\201\AppData\Local\Temp\tmpjcm_760d.webm
+[STT] 8. Whisper 변환 시작
+[STT] 9. Whisper 변환 완료: 
+[STT] 10. 응답 반환
+[STT] 14. 인식된 텍스트: 
+[STT] 11. 임시 파일 삭제 완료: C:\Users\201\AppData\Local\Temp\tmpjcm_760d.webm
+[STT] 1. /stt 요청 도착
+[STT] 2. 업로드 파일명: recorded_audio.webm
+[STT] 4. 파일 확장자: .webm
+[STT] 6. 임시 파일 저장 시작
+[STT] 7. 임시 파일 저장 완료: C:\Users\201\AppData\Local\Temp\tmpoqc7vbfb.webm
+[STT] 8. Whisper 변환 시작
+[STT] 9. Whisper 변환 완료:  5 채
+[STT] 10. 응답 반환
+[STT] 14. 인식된 텍스트:  5 채
+[STT] 11. 임시 파일 삭제 완료: C:\Users\201\AppData\Local\Temp\tmpoqc7vbfb.webm
+[STT] 1. /stt 요청 도착
+[STT] 2. 업로드 파일명: recorded_audio.webm
+[STT] 4. 파일 확장자: .webm
+[STT] 6. 임시 파일 저장 시작
+[STT] 7. 임시 파일 저장 완료: C:\Users\201\AppData\Local\Temp\tmpxaytqc3g.webm
+[STT] 8. Whisper 변환 시작
+[STT] 9. Whisper 변환 완료: 
+[STT] 10. 응답 반환
+[STT] 14. 인식된 텍스트: 
+[STT] 11. 임시 파일 삭제 완료: C:\Users\201\AppData\Local\Temp\tmpxaytqc3g.webm
+[STT] 1. /stt 요청 도착
+[STT] 2. 업로드 파일명: recorded_audio.webm
+[STT] 4. 파일 확장자: .webm
+[STT] 6. 임시 파일 저장 시작
+[STT] 7. 임시 파일 저장 완료: C:\Users\201\AppData\Local\Temp\tmpjie2iod8.webm
+[STT] 8. Whisper 변환 시작
+[STT] 9. Whisper 변환 완료: 
+[STT] 10. 응답 반환
+[STT] 14. 인식된 텍스트: 
+[STT] 11. 임시 파일 삭제 완료: C:\Users\201\AppData\Local\Temp\tmpjie2iod8.webm
+[STT] 1. /stt 요청 도착
+[STT] 2. 업로드 파일명: recorded_audio.webm
+[STT] 4. 파일 확장자: .webm
+[STT] 6. 임시 파일 저장 시작
+[STT] 7. 임시 파일 저장 완료: C:\Users\201\AppData\Local\Temp\tmpcsi92hh2.webm
+[STT] 8. Whisper 변환 시작
+[STT] 9. Whisper 변환 완료:  Visualnd
+[STT] 10. 응답 반환
+[STT] 14. 인식된 텍스트:  Visualnd
+[STT] 11. 임시 파일 삭제 완료: C:\Users\201\AppData\Local\Temp\tmpcsi92hh2.webm
+[STT] 1. /stt 요청 도착
+[STT] 2. 업로드 파일명: recorded_audio.webm
+[STT] 4. 파일 확장자: .webm
+[STT] 6. 임시 파일 저장 시작
+[STT] 7. 임시 파일 저장 완료: C:\Users\201\AppData\Local\Temp\tmpy6wy2p96.webm
+[STT] 8. Whisper 변환 시작
+[STT] 9. Whisper 변환 완료: 
+[STT] 10. 응답 반환
+[STT] 14. 인식된 텍스트: 
+[STT] 11. 임시 파일 삭제 완료: C:\Users\201\AppData\Local\Temp\tmpy6wy2p96.webm
+[STT] 1. /stt 요청 도착
+[STT] 2. 업로드 파일명: recorded_audio.webm
+[STT] 4. 파일 확장자: .webm
+[STT] 6. 임시 파일 저장 시작
+[STT] 7. 임시 파일 저장 완료: C:\Users\201\AppData\Local\Temp\tmpdmr28489.webm
+[STT] 8. Whisper 변환 시작
+[STT] 9. Whisper 변환 완료: 
+[STT] 10. 응답 반환
+[STT] 14. 인식된 텍스트: 
+[STT] 11. 임시 파일 삭제 완료: C:\Users\201\AppData\Local\Temp\tmpdmr28489.webm
+[STT] 1. /stt 요청 도착
+[STT] 2. 업로드 파일명: recorded_audio.webm
+[STT] 4. 파일 확장자: .webm
+[STT] 6. 임시 파일 저장 시작
+[STT] 7. 임시 파일 저장 완료: C:\Users\201\AppData\Local\Temp\tmp85bcuyac.webm
+[STT] 8. Whisper 변환 시작
+[STT] 9. Whisper 변환 완료: 
+[STT] 10. 응답 반환
+[STT] 14. 인식된 텍스트: 
+[STT] 11. 임시 파일 삭제 완료: C:\Users\201\AppData\Local\Temp\tmp85bcuyac.webm
+[STT] 1. /stt 요청 도착
+[STT] 2. 업로드 파일명: recorded_audio.webm
+[STT] 4. 파일 확장자: .webm
+[STT] 6. 임시 파일 저장 시작
+[STT] 7. 임시 파일 저장 완료: C:\Users\201\AppData\Local\Temp\tmp1sfzz9_k.webm
+[STT] 8. Whisper 변환 시작
+[STT] 9. Whisper 변환 완료: 
+[STT] 10. 응답 반환
+[STT] 14. 인식된 텍스트: 
+[STT] 11. 임시 파일 삭제 완료: C:\Users\201\AppData\Local\Temp\tmp1sfzz9_k.webm
+[STT] 1. /stt 요청 도착
+[STT] 2. 업로드 파일명: recorded_audio.webm
+[STT] 4. 파일 확장자: .webm
+[STT] 6. 임시 파일 저장 시작
+[STT] 7. 임시 파일 저장 완료: C:\Users\201\AppData\Local\Temp\tmpkwh8ksw8.webm
+[STT] 8. Whisper 변환 시작
+[STT] 9. Whisper 변환 완료: 
+[STT] 10. 응답 반환
+[STT] 14. 인식된 텍스트: 
+[STT] 11. 임시 파일 삭제 완료: C:\Users\201\AppData\Local\Temp\tmpkwh8ksw8.webm
+[STT] 1. /stt 요청 도착
+[STT] 2. 업로드 파일명: recorded_audio.webm
+[STT] 4. 파일 확장자: .webm
+[STT] 6. 임시 파일 저장 시작
+[STT] 7. 임시 파일 저장 완료: C:\Users\201\AppData\Local\Temp\tmp5xr__4rz.webm
+[STT] 8. Whisper 변환 시작
+[STT] 9. Whisper 변환 완료:  마이크 테스트 중입니다. 마이크 테스트.
+[STT] 10. 응답 반환
+[STT] 14. 인식된 텍스트:  마이크 테스트 중입니다. 마이크 테스트.
+[STT] 11. 임시 파일 삭제 완료: C:\Users\201\AppData\Local\Temp\tmp5xr__4rz.webm

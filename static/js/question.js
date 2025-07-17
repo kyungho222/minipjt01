@@ -1,5 +1,5 @@
 // API 기본 URL 설정
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = window.location.origin;
 
 // 전역 변수
 let currentCount = 0;
@@ -80,69 +80,85 @@ function resetMicModal() {
     if (stopButton) stopButton.style.display = 'none';
 }
 
-// 음성 인식 변수
-let recognition = null;
+// 음성 인식 변수 (MediaRecorder용)
+let mediaRecorder = null;
+let audioChunks = [];
 let isRecording = false;
 
-// 음성 인식 시작
+// startRecording: MediaRecorder로 녹음 시작
 function startRecording() {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        alert('이 브라우저는 음성 인식을 지원하지 않습니다.');
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert('이 브라우저는 마이크 녹음을 지원하지 않습니다.');
         return;
     }
-
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    recognition = new SpeechRecognition();
-    
-    recognition.lang = 'ko-KR';
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    
-    recognition.onstart = function() {
-        isRecording = true;
-        const statusText = document.getElementById('mic_status_text');
-        const startButton = document.getElementById('start_recording');
-        const stopButton = document.getElementById('stop_recording');
-        
-        if (statusText) statusText.textContent = '음성을 인식하고 있습니다...';
-        if (startButton) startButton.style.display = 'none';
-        if (stopButton) stopButton.style.display = 'inline-block';
-    };
-    
-    recognition.onresult = function(event) {
-        const result = event.results[0][0].transcript;
-        const recognizedResult = document.getElementById('recognized_result');
-        const statusText = document.getElementById('mic_status_text');
-        
-        if (recognizedResult) recognizedResult.textContent = result;
-        if (statusText) statusText.textContent = '음성 인식이 완료되었습니다!';
-    };
-    
-    recognition.onerror = function(event) {
-        console.error('음성 인식 오류:', event.error);
-        const statusText = document.getElementById('mic_status_text');
-        if (statusText) statusText.textContent = '음성 인식 중 오류가 발생했습니다.';
-        stopRecording();
-    };
-    
-    recognition.onend = function() {
-        isRecording = false;
-        const startButton = document.getElementById('start_recording');
-        const stopButton = document.getElementById('stop_recording');
-        
-        if (startButton) startButton.style.display = 'inline-block';
-        if (stopButton) stopButton.style.display = 'none';
-    };
-    
-    recognition.start();
+    const statusText = document.getElementById('mic_status_text');
+    const startButton = document.getElementById('start_recording');
+    const stopButton = document.getElementById('stop_recording');
+    if (statusText) statusText.textContent = '마이크 접근 권한을 요청 중입니다...';
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(function(stream) {
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            mediaRecorder.ondataavailable = function(e) {
+                if (e.data.size > 0) audioChunks.push(e.data);
+            };
+            mediaRecorder.onstart = function() {
+                isRecording = true;
+                if (statusText) statusText.textContent = '녹음 중...';
+                if (startButton) startButton.style.display = 'none';
+                if (stopButton) stopButton.style.display = 'inline-block';
+            };
+            mediaRecorder.onstop = function() {
+                isRecording = false;
+                if (startButton) startButton.style.display = 'inline-block';
+                if (stopButton) stopButton.style.display = 'none';
+                if (statusText) statusText.textContent = '음성 인식 중...';
+                // Blob 생성 및 서버 전송
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                sendAudioToServer(audioBlob);
+            };
+            mediaRecorder.start();
+        })
+        .catch(function(err) {
+            if (statusText) statusText.textContent = '마이크 권한이 거부되었습니다.';
+            alert('마이크 권한이 필요합니다.');
+        });
 }
 
-// 음성 인식 중지
+// stopRecording: MediaRecorder로 녹음 중지
 function stopRecording() {
-    if (recognition && isRecording) {
-        recognition.stop();
-        isRecording = false;
+    if (mediaRecorder && isRecording) {
+        mediaRecorder.stop();
     }
+}
+
+// 서버로 오디오 전송 및 결과 표시
+function sendAudioToServer(audioBlob) {
+    const statusText = document.getElementById('mic_status_text');
+    const recognizedResult = document.getElementById('recognized_result');
+    if (statusText) statusText.textContent = '서버로 전송 중...';
+    const formData = new FormData();
+    // Whisper가 webm을 지원하지 않을 수 있으니 wav로 변환 권장, 하지만 브라우저에서 변환 어려우므로 우선 webm으로 전송
+    formData.append('audio_file', audioBlob, 'recorded_audio.webm');
+    fetch(`${API_BASE_URL}/stt`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data && data.text !== undefined) {
+            if (recognizedResult) recognizedResult.textContent = data.text;
+            if (statusText) statusText.textContent = '음성 인식이 완료되었습니다!';
+        } else {
+            if (recognizedResult) recognizedResult.textContent = '';
+            if (statusText) statusText.textContent = '음성 인식 결과가 없습니다.';
+        }
+    })
+    .catch(err => {
+        if (recognizedResult) recognizedResult.textContent = '';
+        if (statusText) statusText.textContent = '음성 인식 중 오류가 발생했습니다.';
+        alert('음성 인식 서버 오류: ' + err);
+    });
 }
 
 // 인식된 텍스트 적용
@@ -192,7 +208,6 @@ async function loadQuestions() {
             throw new Error('올바르지 않은 데이터 형식');
         }
         
-        console.log('로드된 질문:', questions);
         
         // 질문 로딩 모달 숨기기
         hideQuestionLoadingModal();
